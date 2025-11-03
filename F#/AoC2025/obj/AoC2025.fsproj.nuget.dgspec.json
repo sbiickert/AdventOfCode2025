@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj": {}
+  },
+  "projects": {
+    "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj",
+        "projectName": "AoC2025",
+        "projectPath": "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj",
+        "packagesPath": "/Users/sjb/.nuget/packages/",
+        "outputPath": "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/sjb/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/sdk/9.0.306/FSharp/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[9.0.303, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

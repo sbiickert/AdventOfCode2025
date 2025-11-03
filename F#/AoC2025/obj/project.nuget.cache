@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "veeDrOeD+jQ=",
+  "success": true,
+  "projectFilePath": "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj",
+  "expectedPackageFiles": [
+    "/Users/sjb/.nuget/packages/fsharp.core/9.0.303/fsharp.core.9.0.303.nupkg.sha512"
+  ],
+  "logs": []
+}

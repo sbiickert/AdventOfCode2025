@@ -1,0 +1,22 @@
+[<AutoOpen>]
+module Day00
+
+open AoC.Util
+
+let solvePartOne input =
+    1
+
+let solvePartTwo input =
+    2
+
+let solveDay00 isTest: Unit =
+    let day = 0
+    let puzzleName = "Testing"
+    printfn $"Day {day}: {puzzleName}"
+    let inputName = inputFileName day isTest
+    let input = readInput inputName true
+
+    let solution1 = solvePartOne input
+    let solution2 = solvePartTwo input
+
+    printfn "All done."
