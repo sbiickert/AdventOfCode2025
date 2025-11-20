@@ -27,3 +27,4 @@
 /Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/obj/Debug/net9.0/AoC2025.pdb
 /Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/obj/Debug/net9.0/AoC2025.genruntimeconfig.cache
 /Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/obj/Debug/net9.0/ref/AoC2025.dll
+/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/obj/Debug/net9.0/AoC2025.sourcelink.json

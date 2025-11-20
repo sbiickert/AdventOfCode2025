@@ -2,3 +2,7 @@
 /F\#/AoC2025/bin
 F\#/.DS_Store
 .DS_Store
+/F\#/AoC2025/obj
+/F\#/AoC2025/obj
+/Raku/lib/.precomp
+Raku/.DS_Store
