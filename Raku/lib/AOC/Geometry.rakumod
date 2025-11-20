@@ -101,7 +101,7 @@ class Coord is export {
 	
 	method is_adjacent(Coord $other, AdjacencyRule $rule = AdjacencyRule::ROOK --> Bool) {
 		if ($rule eq AdjacencyRule::ROOK) {
-			return self.manhattanDistanceTo($other) == 1;
+			return self.manhattan_distance_to($other) == 1;
 		}
 		elsif ($rule eq AdjacencyRule::BISHOP) {
 			return abs($!x - $other.x) == 1 &&
@@ -139,12 +139,12 @@ class Coord is export {
 		Coord.new( x => $other.x - $.x, y => $other.y - $.y )
 	}
 	
-	method distanceTo(Coord $other --> Num) {
+	method distance_to(Coord $other --> Num) {
 		my $delta = $.delta($other);
 		return sqrt($delta.x**2 + $delta.y**2);
 	}
 	
-	method manhattanDistanceTo(Coord $other --> Int) {
+	method manhattan_distance_to(Coord $other --> Int) {
 		#my $delta = $.delta($other);
 		#return abs($delta.x) + abs($delta.y);
 		return abs($other.x - $.x) + abs($other.y - $.y);

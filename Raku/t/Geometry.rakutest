@@ -35,8 +35,8 @@ sub test_coord2d() {
 	my $delta = $c2d.delta($other);
 	ok $delta.col == -5 && $delta.row == -10 or diag "Delta $delta.Str";
 
-	ok approx_equal($c2d.distanceTo($other).Rat, 11.1803398874989) or diag "Distance wasn't within tolerance.";
-	ok $c2d.manhattanDistanceTo($other) == 15 or diag "Manhattan distance was not correct.";
+	ok approx_equal($c2d.distance_to($other).Rat, 11.1803398874989) or diag "Distance wasn't within tolerance.";
+	ok $c2d.manhattan_distance_to($other) == 15 or diag "Manhattan distance was not correct.";
 
 	ok Coord.get_offset('N') eqv Coord.from_ints( 0,-1) or diag "Testing offset N";
 	ok Coord.get_offset('<') eqv Coord.from_ints(-1, 0) or diag "Testing offset <";
