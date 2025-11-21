@@ -1,6 +1,6 @@
 //
 //  AOCInput.h
-//  AoC2017
+//  AoC2025
 //
 //  Created by Simon Biickert on 2023-01-27.
 //
@@ -32,5 +32,7 @@ extern NSString * const INPUT_FOLDER;
 - (AOCInput *)initWithSolution:(AOCSolution *)solution filename:(NSString *)filename atIndex:(int)index;
 
 - (NSString *)getID;
+- (NSURL *)inputPath;
+- (NSArray<NSString *> *)textLines;
 
 @end

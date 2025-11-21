@@ -1,6 +1,6 @@
 //
 //  AOCInput.m
-//  AoC2017
+//  AoC2025
 //
 //  Created by Simon Biickert on 2023-01-27.
 //
@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "AOCInput.h"
 
-NSString * const INPUT_FOLDER = @"~/Developer/Advent of Code/2025/AdventOfCode2025/Input";
+NSString * const INPUT_FOLDER = @"~/Developer/Advent of Code/2025/AdventOfCode2025/input";
 
 @implementation AOCInput
 
@@ -52,7 +52,7 @@ NSString * const INPUT_FOLDER = @"~/Developer/Advent of Code/2025/AdventOfCode20
 
 + (NSString *)makeFilenameForDay:(int)day isTest:(BOOL)isTest {
 	NSString *label = isTest ? @"test" : @"challenge";
-	return [NSString stringWithFormat:@"day%02d_%@.txt", day, label];
+	return [NSString stringWithFormat:@"day%02d_%@.txt", day, label]; // <------ Format for input file names
 }
 
 + (NSURL *)getInputPathFor:(NSString *)filename {
@@ -130,5 +130,17 @@ NSString * const INPUT_FOLDER = @"~/Developer/Advent of Code/2025/AdventOfCode20
 - (NSString *)getID {
 	return [NSString stringWithFormat:@"%@[%d]", self.filename, self.index];
 }
+
+- (NSURL *)inputPath {
+	return [AOCInput getInputPathFor:self.filename];
+}
+
+- (NSArray<NSString *> *)textLines {
+	if (self.solution.emptyLinesIndicateMultipleInputs == YES) {
+		return [AOCInput readGroupedInputFile:self.filename atIndex:self.index];
+	}
+	return [AOCInput readInputFile:self.filename removingEmptyLines:NO];
+}
+
 
 @end
