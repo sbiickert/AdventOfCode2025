@@ -9,12 +9,11 @@ We know that 2025 will feature a cut-down number of puzzles: 12 instead of 24 an
 - [Objective-C](https://code.fandom.com/wiki/Objective-C): Smalltalk-based object-oriented programming
 - [Raku](https://raku.org): Next-generation Perl-based language
 - [Swift](https://www.swift.org): Apple's modern language, set up in [Swift Playground](https://developer.apple.com/swift-playground/)
+- [Pharo](https://pharo.org): A modern Smalltalk implementation
 
-I have solved complete years in each of these languages, including "first solves" for all but F#. I did 2020, 2021 and 2023 in Swift (2020 in Swift Playground in Xcode and 2023 in Swift Playground on my iPad Pro) and I did 2024 in Raku. Going back into the backlog, I did 2016, 2017 and 2018 in Objective-C, and I've done a full solve of 2015 in F#. I only learned F# earlier this year and haven't used it for a "first solve".
+I have solved complete years in each of these languages, including "first solves" for all but F# and Smalltalk. I did 2020, 2021 and 2023 in Swift (2020 in Swift Playground in Xcode and 2023 in Swift Playground on my iPad Pro) and I did 2024 in Raku. Going back into the backlog, I did 2016, 2017 and 2018 in Objective-C, and I've done a full solve of 2015 in F#. I only learned F# earlier this year and haven't used it for a "first solve". I only started Smalltalk last month. I solved the first 13 days of 2020 with it without any trouble.
 
 ### Some Potential Alternates
-
-I've been poking at [Squeak](https://squeak.org) Smalltalk, and it might join the roster, but I would need to figure out how to manage code (and figure out the tools, etc., etc.). I figure with my experience with Objective-C that Smalltalk would be straightforward.
 
 If I was going for the gusto, I'd pull out my G4 PowerBook and use CodeWarrior and C++98. But I don't think I'm that masochistic. I did a partial solve of 2020 with C++ and got frustrated.
 
