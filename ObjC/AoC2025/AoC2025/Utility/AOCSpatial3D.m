@@ -61,8 +61,8 @@
 
 - (double)distanceTo:(AOCCoord3D *)other
 {
-	NSLog(@"AOCCoord3D::distance is not implemented yet.");
-	return 0.0;
+	AOCCoord3D *d = [self deltaTo:other];
+	return sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
 }
 
 - (NSInteger)manhattanDistanceTo:(AOCCoord3D *)other

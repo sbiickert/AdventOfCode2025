@@ -7,8 +7,8 @@
 
 @interface AOCMath : NSObject
 
-+ (NSInteger)gcdForX:(NSInteger)x Y:(NSInteger)y;
-+ (NSInteger)lcmForX:(NSInteger)x Y:(NSInteger)y;
++ (NSInteger)gcdOfX:(NSInteger)x andY:(NSInteger)y;
++ (NSInteger)lcmOfX:(NSInteger)x andY:(NSInteger)y;
 + (NSInteger)lcmIn:(NSArray<NSNumber *>*)values;
 
 @end

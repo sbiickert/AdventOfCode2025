@@ -19,7 +19,7 @@
 }
 
 - (void)testLCM {
-	NSInteger lcm2 = [AOCMath lcmForX:3761 Y:4091];
+	NSInteger lcm2 = [AOCMath lcmOfX:3761 andY:4091];
 	XCTAssertEqual(lcm2, 15386251);
 	
 	NSArray<NSNumber *> *numbers = @[@3761, @3767, @4001, @4091];

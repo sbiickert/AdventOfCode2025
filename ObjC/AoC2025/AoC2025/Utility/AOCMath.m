@@ -10,7 +10,7 @@
 
 @implementation AOCMath
 
-+ (NSInteger)gcdForX:(NSInteger)x Y:(NSInteger)y {
++ (NSInteger)gcdOfX:(NSInteger)x andY:(NSInteger)y {
 	NSInteger a = 0;
 	NSInteger b = MAX(x,y);
 	NSInteger r = MIN(x,y);
@@ -22,15 +22,15 @@
 	return b;
 }
 
-+ (NSInteger)lcmForX:(NSInteger)x Y:(NSInteger)y {
-	return x / [AOCMath gcdForX:x Y:y] * y;
++ (NSInteger)lcmOfX:(NSInteger)x andY:(NSInteger)y {
+	return x / [AOCMath gcdOfX:x andY:y] * y;
 }
 
 + (NSInteger)lcmIn:(NSArray<NSNumber *>*)values{
 	if (values.count == 0) { return 0; }
 	NSInteger running = values.firstObject.integerValue;
 	for (NSInteger i = 1; i < values.count; i++) {
-		running = [AOCMath lcmForX:running Y:values[i].integerValue];
+		running = [AOCMath lcmOfX:running andY:values[i].integerValue];
 	}
 	return running;
 }

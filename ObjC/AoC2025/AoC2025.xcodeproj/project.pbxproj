@@ -19,6 +19,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3742DA072ED29D410083A213 /* AoC2025Test.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = AoC2025Test.xctestplan; path = AoC2025Test/AoC2025Test.xctestplan; sourceTree = "<group>"; };
 		3749ADE82ECFDF1900E9C5AF /* AoC2025Test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AoC2025Test.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37CFEAD92EB9513300CD11EA /* AoC2025 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AoC2025; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -79,6 +80,7 @@
 		37CFEAD02EB9513300CD11EA = {
 			isa = PBXGroup;
 			children = (
+				3742DA072ED29D410083A213 /* AoC2025Test.xctestplan */,
 				37CFEADB2EB9513300CD11EA /* AoC2025 */,
 				3749ADE92ECFDF1900E9C5AF /* AoC2025Test */,
 				37CFEADA2EB9513300CD11EA /* Products */,

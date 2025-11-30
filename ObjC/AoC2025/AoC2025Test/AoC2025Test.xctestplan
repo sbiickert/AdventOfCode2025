@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "3E1D75A1-C680-4D06-A76B-E7BD76D1E3AF",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:AoC2025.xcodeproj",
+        "identifier" : "3749ADE72ECFDF1900E9C5AF",
+        "name" : "AoC2025Test"
+      }
+    }
+  ],
+  "version" : 1
+}
