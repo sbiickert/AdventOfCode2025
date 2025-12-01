@@ -12,7 +12,7 @@
 @implementation AOCDay01
 
 - (AOCDay01 *)init {
-	self = [super initWithDay:1 name:@"abc"];
+	self = [super initWithDay:1 name:@"Secret Entrance"];
 	return self;
 }
 
@@ -21,20 +21,48 @@
 	
 	NSArray<NSString *> *input = [AOCInput readGroupedInputFile:filename atIndex:index];
 	
-	result.part1 = [self solvePartOne: [input objectAtIndex:0]];
-	result.part2 = [self solvePartTwo: [input objectAtIndex:0]];
+	NSMutableArray<NSNumber *> *numbers = [NSMutableArray array];
+	[input enumerateObjectsUsingBlock:^(NSString *line, NSUInteger idx, BOOL *stop) {
+		line = [line stringByReplacingOccurrencesOfString:@"L" withString:@"-"];
+		line = [line stringByReplacingOccurrencesOfString:@"R" withString:@""];
+		[numbers addObject:[NSNumber numberWithInteger:[line integerValue]]];
+	}];
+	
+	result.part1 = [self solvePartOne: numbers];
+	result.part2 = [self solvePartTwo: numbers];
 	
 	return result;
 }
 
-- (NSString *)solvePartOne:(NSString *)input {
-
-	return @"abc";
+- (NSString *)solvePartOne:(NSArray<NSNumber *> *)input {
+	NSInteger value = 50;
+	NSInteger zeroCount = 0;
+	
+	for (NSNumber *number in input) {
+		value += number.integerValue;
+		value %= 100;
+		if (value == 0) { zeroCount++; }
+	}
+	
+	return [NSString stringWithFormat:@"The number of times ending on zero is %ld", zeroCount];
 }
 
-- (NSString *)solvePartTwo:(NSString *)input {
-
-	return @"123";
+- (NSString *)solvePartTwo:(NSArray<NSNumber *> *)input {
+	NSInteger value = 50;
+	NSInteger zeroCount = 0;
+	
+	for (NSNumber *number in input) {
+		NSInteger i = number.integerValue;
+		NSInteger step = i / labs(i);
+		
+		for (NSInteger j = 0; j < labs(i); j++) {
+			value += step;
+			value %= 100;
+			if (value == 0) { zeroCount++; }
+		}
+	}
+	
+	return [NSString stringWithFormat:@"The number of times pointing at zero is %ld", zeroCount];
 }
 
 @end
