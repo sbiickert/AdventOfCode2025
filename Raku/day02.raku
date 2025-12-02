@@ -14,23 +14,15 @@ say "Advent of Code 2025, Day 2: Gift Shop";
 
 my @ranges = split(',', @input[0]);
 
-my $re;
-solve_part_one();
-solve_part_two();
+my $part = 1;
+my $sum1 = sum_invalid_ids();
+say "Part One: the sum of invalid ids is $sum1";
+
+$part = 2;
+my $sum2 = sum_invalid_ids();
+say "Part Two: the sum of invalid ids is $sum2";
 
 exit( 0 );
-
-sub solve_part_one() {
-    $re =  / ^ (\d+) $0 $ /;
-	my $sum = sum_invalid_ids();
-    say "Part One: the sum of invalid ids is $sum";
-}
-
-sub solve_part_two() {
-    $re = / ^ (\d+) $0+ $ /;
-	my $sum = sum_invalid_ids();
-    say "Part Two: the sum of invalid ids is $sum";
-}
 
 sub sum_invalid_ids() {
     my @sum_per_range = @ranges>>.&sum_invalid_ids_for_range;
@@ -39,7 +31,28 @@ sub sum_invalid_ids() {
 
 sub sum_invalid_ids_for_range($r) {
     my @range = parseRange($r);
-    my @values = @range.map(-> $id {$id ~~ $re ?? $id !! 0});
+    my @values = @range.map(-> $id {
+        my $idStr = $id.Str;
+        my $idLen = $idStr.chars;
+        my $value = 0;
+        if $part == 1 {
+            if $idLen %% 2 {
+                $value = $idStr.substr(0, $idLen/2) eq $idStr.substr($idLen/2) ?? $id !! 0;
+            }
+        }
+        else {
+            for 1..$idLen/2 -> $part_len {
+                if $idLen %% $part_len {
+                    my $remainder = $idStr.subst($idStr.substr(0, $part_len), '', :g);
+                    if $remainder.chars == 0 {
+                        $value = $id;
+                        last;
+                    }
+                }
+            }
+        }
+        $value;
+    });
     return @values.sum();
 }
 
