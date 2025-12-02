@@ -19,8 +19,10 @@ exit( 0 );
 
 sub solve_part_one(@input) {
 	
+    say "Part One:  ";
 }
 
 sub solve_part_two(@input) {
 	
+    say "Part Two:  ";
 }

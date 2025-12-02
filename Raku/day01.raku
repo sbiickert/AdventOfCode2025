@@ -43,5 +43,5 @@ sub solve_part_two(@input) {
             $zero_count++ if $value == 0;
         }
     }
-	say "Part One: the number times passing 0 is $zero_count";
+	say "Part Two: the number times passing 0 is $zero_count";
 }
