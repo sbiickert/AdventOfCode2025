@@ -15,7 +15,7 @@ let valueOfId (id:int64) (re:Regex) =
     else 0
 
 
-let solvePart  (ranges:array<(int64 * int64)>) (re:Regex) =
+let solvePart (ranges:array<(int64 * int64)>) (re:Regex) =
     ranges
     |> Array.Parallel.map (fun r -> 
         let a, b = r
@@ -34,7 +34,7 @@ let parseRanges (s:string) =
 
 let solveDay02 isTest: Unit =
     let day = 02
-    let puzzleName = "Unknown"
+    let puzzleName = "Gift Shop"
     printfn $"Day {day}: {puzzleName}"
     let inputName = inputFileName day isTest
     let input = readInput inputName true
