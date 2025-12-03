@@ -6,5 +6,5 @@ open AoC
 // Solutions
 
 // solveDay00 true |> ignore
-solveDay01 false |> ignore   // Secret Entrance
-// solveDay02 true |> ignore   // Unknown
+// solveDay01 false |> ignore   // Secret Entrance
+solveDay02 false |> ignore   // Gift Shop
