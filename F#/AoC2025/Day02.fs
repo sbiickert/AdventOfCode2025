@@ -2,6 +2,7 @@
 module Day02
 
 open System.Text.RegularExpressions
+open FSharp.Collections.Array.Parallel
 open AoC.Util
 
 let re1 = Regex(@"^(\d+)\1$")
@@ -14,21 +15,21 @@ let valueOfId (id:int64) (re:Regex) =
     else 0
 
 
-let solvePart  (ranges:list<(int64 * int64)>) (re:Regex) =
+let solvePart  (ranges:array<(int64 * int64)>) (re:Regex) =
     ranges
-    |> List.map (fun r -> 
+    |> Array.Parallel.map (fun r -> 
         let a, b = r
         seq {a .. b}
         |> Seq.map (fun id -> valueOfId id re)
         |> Seq.sum)
-    |> List.sum
+    |> Array.sum
 
 
 let parseRanges (s:string) =
     s.Split(',')
     |> Array.map (fun (s:string) -> s.Split('-'))
     |> Seq.map (fun (arr:string array) -> (int64 arr[0], int64 arr[1]))
-    |> Seq.toList
+    |> Seq.toArray
 
 
 let solveDay02 isTest: Unit =
