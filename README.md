@@ -24,3 +24,9 @@ Speaking of masochistic, I discovered [Uiua](https://www.uiua.org) about a month
 Part of me wouldn't mind doing this in Python. I've done a lot of Python lately with my pygissim project, and by using at with strong typing of variables and VS Code, I haven't gone crazy. But Python and VS Code is how most people solve AoC, and I don't want to be most people.
 
 I've also got language-specific setups for Perl, PHP, Pascal and Ruby. Pascal in MPW would be a feat.
+
+### Day 4 Complete
+
+Thanks to the shortened event this year, we're already 1/3 done. Yesterday was the first puzzle where it took me a long time to figure out how to solve it. Then the problem was compounded by my solution working on the test data and not on the real input. Got it in the end, and I was thankful that day 4 was a 2D grid problem.
+
+So far, all of the "solves" have been in [Smalltalk](https://github.com/sbiickert/AdventOfCode2025-Pharo) with three additional solves on day 1 (F#, ObjC, Raku) and two on day 2 (F#, Raku). Since I only got my second star for day 3 this morning and managed to squeeze out day 4 before work, I don't have any additional solves for these days yet. The Christmas party is tonight, but I have tomorrow off, so we'll see how I fare on the day 5 solve.
