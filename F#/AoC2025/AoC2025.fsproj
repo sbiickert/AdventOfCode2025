@@ -7,6 +7,8 @@
     <Compile Include="AoCUtil.fs" />
     <Compile Include="AoCGeometry.fs" />
     <Compile Include="AoCGrid.fs" />
+    <Compile Include="Day04.fs" />
+    <Compile Include="Day03.fs" />
     <Compile Include="Day02.fs" />
     <Compile Include="Day01.fs" />
     <Compile Include="Day00.fs" />

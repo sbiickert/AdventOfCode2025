@@ -7,4 +7,6 @@ open AoC
 
 // solveDay00 true |> ignore
 // solveDay01 false |> ignore   // Secret Entrance
-solveDay02 false |> ignore   // Gift Shop
+// solveDay02 false |> ignore   // Gift Shop
+// solveDay03 true |> ignore   // Lobby
+solveDay04 false |> ignore   // Printing Department
