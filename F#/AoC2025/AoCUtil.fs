@@ -89,6 +89,18 @@ module Util =
 
     let approxEqual (tolerance:double) d1 d2 =
         abs(d1-d2) < tolerance
+        
+    let rec combinations k (xs : 'a list) : 'a list list =
+        match k, xs with
+        | 0, _      -> [[]] // Base case: if k is 0, an empty list is a valid combination
+        | _, []     -> []   // Base case: if the list is empty and k > 0, no combinations are possible
+        | k, h :: t ->
+            // Option 1: Include the head element in the combination
+            let withHead = combinations (k - 1) t |> List.map (fun c -> h :: c)
+            // Option 2: Exclude the head element from the combination
+            let withoutHead = combinations k t
+            // Combine the results from both options
+            withHead @ withoutHead
 
     // For unit testing
     let assertEqual a b =

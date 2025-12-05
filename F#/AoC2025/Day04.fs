@@ -48,8 +48,8 @@ let solveDay04 isTest: Unit =
     let input = readInput inputName true
 
     let solution1 = solvePartOne input
-    printfn $"Part One: {solution1}"
+    printfn $"Part One: the number of accessible rolls is {solution1}"
     let solution2 = solvePartTwo input
-    printfn $"Part Two: {solution2}"
+    printfn $"Part Two: the number of removed rolls is {solution2}"
 
     printfn "All done."
