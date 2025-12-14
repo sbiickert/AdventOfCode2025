@@ -6,6 +6,7 @@ module Geometry =
         {
             x: int64
             y: int64
+            z: int64 option
         }
 
     type AdjacencyRule =
@@ -45,8 +46,17 @@ module Geometry =
             max: Coord
         }
 
-    let mkCoord (x:int64) (y:int64) =
-        {x = x; y = y}
+    type Extent1 =
+        {
+            minI: int64
+            maxI: int64
+        }
+
+    let mkCoord (x:int64) (y:int64): Coord =
+        {x = x; y = y; z = None}
+
+    let mkCoord3 (x:int64) (y:int64) (z:int64): Coord =
+        {x = x; y = y; z = Some z}
 
     let mkPos coord dir =
         {coord = coord; dir = dir}
@@ -54,7 +64,7 @@ module Geometry =
     let mkSeg coordFrom coordTo =
         {a = coordFrom; b = coordTo}
 
-    let rec expandExtentToFit ext (coords: list<Coord>) =
+    let rec expandExtentToFit (ext:Extent) (coords: list<Coord>) =
             if coords.IsEmpty then ext
             else
                 let minX = min ext.min.x coords.Head.x
@@ -76,14 +86,14 @@ module Geometry =
     module Direction =
         let offset (d:Direction) =
             match d with
-            | Direction.N  -> {x =  0; y = -1}
-            | Direction.NE -> {x =  1; y = -1}
-            | Direction.E  -> {x =  1; y =  0}
-            | Direction.SE -> {x =  1; y =  1}
-            | Direction.S  -> {x =  0; y =  1}
-            | Direction.SW -> {x = -1; y =  1}
-            | Direction.W  -> {x = -1; y =  0}
-            | Direction.NW -> {x = -1; y = -1}
+            | Direction.N  -> {x =  0; y = -1; z = None}
+            | Direction.NE -> {x =  1; y = -1; z = None}
+            | Direction.E  -> {x =  1; y =  0; z = None}
+            | Direction.SE -> {x =  1; y =  1; z = None}
+            | Direction.S  -> {x =  0; y =  1; z = None}
+            | Direction.SW -> {x = -1; y =  1; z = None}
+            | Direction.W  -> {x = -1; y =  0; z = None}
+            | Direction.NW -> {x = -1; y = -1; z = None}
         
         let fromString (dir:string) =
             match dir.ToUpper() with
@@ -108,31 +118,47 @@ module Geometry =
         let origin = mkCoord 0 0 
 
         let add a b =
-            {x = a.x + b.x; y = a.y + b.y}
+            match a.z with
+            | Some az -> 
+                match b.z with
+                | Some bz -> {x = a.x + b.x; y = a.y + b.y; z = Some (az + bz)}
+                | None -> {x = a.x + b.x; y = a.y + b.y; z = None}
+            | None -> {x = a.x + b.x; y = a.y + b.y; z = None}
         
         let delta a b =
-            {x = b.x - a.x; y = b.y - a.y}
+            match a.z with
+            | Some az ->
+                match b.z with
+                | Some bz -> {x = b.x - a.x; y = b.y - a.y; z = Some(bz - az)}
+                | None -> {x = b.x - a.x; y = b.y - a.y; z = None}
+            | None -> {x = b.x - a.x; y = b.y - a.y; z = None}
 
         let manhattanDistance a b =
-            abs(a.x - b.x) + abs(a.y - b.y)
+            let del = delta a b
+            match del.z with
+            | Some z -> abs del.x + abs del.y + abs z
+            | None -> abs del.x + abs del.y
+            
 
         let distance a b =
             let del = delta a b
-            sqrt (double del.x ** 2 + double del.y ** 2)
+            match del.z with
+            | Some delz -> sqrt (double del.x ** 2 + double del.y ** 2 + double delz ** 2)
+            | None -> sqrt (double del.x ** 2 + double del.y ** 2)
 
         let offset dir (size: int64) a =
             let off = Direction.offset dir
             if size = 0 then a
             elif size = 1 then add a off
             else
-                let bigOffset = {x = off.x * size; y = off.y * size}
+                let bigOffset = {x = off.x * size; y = off.y * size; z = None}
                 add a bigOffset
         
         let areAdjacent a b (rule:AdjacencyRule) =
             match rule with
             | AdjacencyRule.Rook -> manhattanDistance a b = 1
             | AdjacencyRule.Bishop -> abs(a.x - b.x) = 1 && abs(a.y - b.y) = 1
-            | AdjacencyRule.Queen -> manhattanDistance a b = 1 || (abs(a.x - b.x) = 1 && abs(a.y - b.y) = 1)
+            | AdjacencyRule.Queen -> manhattanDistance a b = 1 || abs(a.x - b.x) = 1 && abs(a.y - b.y) = 1
 
         let adjacentCoords c (rule:AdjacencyRule) =
             let adjacent =
@@ -160,7 +186,7 @@ module Geometry =
 
         let moveForward pos (distance: int64) =
             let off = Direction.offset pos.dir
-            let move = {x = off.x * distance; y = off.y * distance}
+            let move = {x = off.x * distance; y = off.y * distance; z = None}
             let nextPos = Coord.add pos.coord move
             mkPos nextPos pos.dir
     
@@ -197,9 +223,9 @@ module Geometry =
             expandExtentToFit ext coords
         
         let NW ext = ext.min
-        let NE ext = {x = ext.max.x; y = ext.min.y}
+        let NE ext = {x = ext.max.x; y = ext.min.y; z = None}
         let SE ext = ext.max
-        let SW ext = {x = ext.min.x; y = ext.max.y}
+        let SW ext = {x = ext.min.x; y = ext.max.y; z = None}
 
         let widthOf (ext:Extent) = ext.max.x - ext.min.x + 1L
         let heightOf (ext:Extent) = ext.max.y - ext.min.y + 1L

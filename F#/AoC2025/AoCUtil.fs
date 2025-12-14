@@ -111,3 +111,9 @@ module Util =
         
     let assertFalse a =
         if a <> false then failwith $"Assertion was not false."
+
+    let assertIsSome (a:'T option) =
+        if a.IsNone then failwith $"Value was None."
+
+    let assertIsNone (a:'T option) =
+        if a.IsSome then failwith $"Value '{a}' was Some."

@@ -13,9 +13,9 @@ open AoC.Util
 // Y8888D' Y888888P 88   YD Y88888P  `Y88P'    YP    Y888888P  `Y88P'  VP   V8P
 let testDirectionOffset () =
     let n = Direction.offset Direction.N
-    assertEqual {x = 0; y = -1} n
+    assertEqual {x = 0; y = -1; z = None} n
     let sw = Direction.offset Direction.SW
-    assertEqual {x= -1; y = 1} sw
+    assertEqual {x= -1; y = 1; z = None} sw
 
 testDirectionOffset()
 
@@ -44,9 +44,15 @@ let testCoordCreate () =
     let c = mkCoord 10 30
     assertEqual 10L c.x
     assertEqual 30L c.y
+    assertIsNone c.z
     let copied = {c with y = -40}
     assertEqual 10L copied.x
     assertEqual -40L copied.y
+    assertIsNone copied.z
+    let c3 = mkCoord3 10 20 30
+    assertEqual 10L c3.x
+    assertEqual 20L c3.y
+    assertEqual 30L c3.z.Value
 
 testCoordCreate ()
 
@@ -56,9 +62,22 @@ let testCoordAddSub () =
     let sum = Coord.add c1 c2
     assertEqual 15L sum.x
     assertEqual 50L sum.y
+    assertIsNone sum.z
     let delta = Coord.delta c1 c2
     assertEqual -5L delta.x
     assertEqual -10L delta.y
+    assertIsNone delta.z
+
+    let c3a = mkCoord3 10 20 30
+    let c3b = mkCoord3 5 10 15
+    let sum3 = Coord.add c3a c3b
+    assertEqual 15L sum3.x
+    assertEqual 30L sum3.y
+    assertEqual 45L sum3.z.Value
+    let delta3 = Coord.delta c3a c3b
+    assertEqual -5L delta3.x
+    assertEqual -10L delta3.y
+    assertEqual -15L delta3.z.Value
     
 testCoordAddSub ()
 
@@ -69,12 +88,18 @@ let testCoordDistance () =
     assertEqual 15L md
     let d = Coord.distance c1 c2
     assertTrue (AoC.Util.approxEqual 0.01 d 11.18)
+    let c3a = mkCoord3 10 20 30
+    let c3b = mkCoord3 5 10 15
+    let md3 = Coord.manhattanDistance c3a c3b
+    assertEqual 30L md3
+    let d3 = Coord.distance c3a c3b
+    assertTrue (AoC.Util.approxEqual 0.01 d3 18.71)
 
 testCoordDistance ()
 
 let testCoordOffsets () = 
-    assertEqual {x = 0; y = -1} (Coord.offset Direction.N 1L Coord.origin)
-    assertEqual {x = -1; y = 1} (Coord.offset Direction.SW 1L Coord.origin)
+    assertEqual {x = 0; y = -1; z = None} (Coord.offset Direction.N 1L Coord.origin)
+    assertEqual {x = -1; y = 1; z = None} (Coord.offset Direction.SW 1L Coord.origin)
 
 testCoordOffsets ()
 
@@ -87,7 +112,7 @@ let testCoordAdjacency () =
     assertFalse (Coord.areAdjacent cDiag Coord.origin AdjacencyRule.Rook)
     assertTrue (Coord.areAdjacent cDiag Coord.origin AdjacencyRule.Bishop)
     assertTrue (Coord.areAdjacent cDiag Coord.origin AdjacencyRule.Queen)
-    let cFar = {x = 2; y = 0}
+    let cFar = {x = 2; y = 0; z = None}
     assertFalse (Coord.areAdjacent cFar Coord.origin AdjacencyRule.Queen)
 
     let rookAdj = Coord.adjacentCoords Coord.origin AdjacencyRule.Rook
@@ -106,8 +131,8 @@ testCoordAdjacency ()
 // 88      `8b  d8' db   8D   .88.      88      .88.   `8b  d8' 88  V888
 // 88       `Y88P'  `8888Y' Y888888P    YP    Y888888P  `Y88P'  VP   V8P
 let testPositionCreate () =
-    let e = mkPos {x = 5; y = 5} Direction.E
-    assertEqual {x = 5; y = 5} e.coord
+    let e = mkPos (mkCoord 5 5) Direction.E
+    assertEqual (mkCoord 5 5) e.coord
     assertEqual Direction.E e.dir
 
 testPositionCreate ()
@@ -142,7 +167,7 @@ testPositionMove ()
 // db   8D 88.     88. ~8~ 88  88  88 88.     88  V888    88   
 // `8888Y' Y88888P  Y888P  YP  YP  YP Y88888P VP   V8P    YP   
 let testSegmentCreate () =
-    let seg = mkSeg Coord.origin {x = 1; y = 0}
+    let seg = mkSeg Coord.origin (mkCoord 1 0)
     assertEqual 0L seg.a.x
     assertEqual 0L seg.a.y
     assertEqual 1L seg.b.x
@@ -151,11 +176,11 @@ let testSegmentCreate () =
 testSegmentCreate ()
 
 let testSegmentDirectionality () =
-    let segHE = mkSeg Coord.origin {x = 1; y = 0}
+    let segHE = mkSeg Coord.origin (mkCoord 1 0)
     assertTrue (Segment.isHorizontal segHE)
     assertFalse (Segment.isVertical segHE)
     assertEqual (Segment.direction segHE) Direction.E
-    let segHW = mkSeg Coord.origin {x = -1; y = 0}
+    let segHW = mkSeg Coord.origin (mkCoord -1 0)
     assertTrue (Segment.isHorizontal segHW)
     assertFalse (Segment.isVertical segHW)
     assertEqual (Segment.direction segHW) Direction.W
@@ -174,7 +199,7 @@ let testSegmentDirectionality () =
 testSegmentDirectionality ()
 
 let testSegmentLength () = 
-    let sZero = mkSeg {x = 5; y = 5} {x = 5; y = 5}
+    let sZero = mkSeg (mkCoord 5 5) (mkCoord 5 5)
     assertEqual 0L (Segment.length sZero)
     assertEqual Direction.N (Segment.direction sZero)
 
@@ -195,9 +220,9 @@ let testExtentCreate () =
     let e1 = mkExtent [c1;c2]
     let e2 = mkExtent [c3;c2;c1]
     let e3 = Extent.expandToFit e2 [c4]
-    assertEqual {min = {x = -1; y = 1}; max = {x = 2; y = 8}} e1
-    assertEqual {min = {x = -1; y = 1}; max = {x = 3; y = 8}} e2
-    assertEqual {min = {x = -1; y = 1}; max = {x = 4; y = 8}} e3
+    assertEqual {min = mkCoord -1 1; max = mkCoord 2 8} e1
+    assertEqual {min = mkCoord -1 1; max = mkCoord 3 8} e2
+    assertEqual {min = mkCoord -1 1; max = mkCoord 4 8} e3
 
 testExtentCreate ()
 
@@ -208,8 +233,8 @@ let testExtentBounds () =
     assertEqual 4L (Extent.widthOf e0)
     assertEqual 8L (Extent.heightOf e0)
     assertEqual 40L (Extent.areaOf e1)
-    assertEqual {x = -1; y = 1} (Extent.NW e2)
-    assertEqual {x = -1; y = 8} (Extent.SW e2)
+    assertEqual (mkCoord -1 1) (Extent.NW e2)
+    assertEqual (mkCoord -1 8) (Extent.SW e2)
 
 testExtentBounds()
 
@@ -218,9 +243,9 @@ let testExtentAllCoords () =
     let coords = Extent.allCoordsIn e1
     assertEqual (Extent.areaOf e1) coords.Length
     // Check Reading Order
-    assertEqual {x = -1; y = 1} coords.Head
-    assertEqual {x = 0; y = 1} coords[1]
-    assertEqual {x = 3; y = 8} coords[coords.Length-1]
+    assertEqual (mkCoord -1 1) coords.Head
+    assertEqual (mkCoord 0 1) coords[1]
+    assertEqual (mkCoord 3 8) coords[coords.Length-1]
 
 testExtentAllCoords()
 

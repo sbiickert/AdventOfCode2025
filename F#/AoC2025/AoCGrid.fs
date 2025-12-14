@@ -82,7 +82,7 @@ module Grid =
                 let xseq = seq { for x in [0 .. chars.Length-1] -> (x, chars[x]) }
                 for (x, c) in xseq do
                     if c <> grid.defaultValue then
-                        grid <- setValue {x = x; y = y} (Glyph c) grid
+                        grid <- setValue (mkCoord x y) (Glyph c) grid
             grid
         
         let clear coord resetExtent grid =

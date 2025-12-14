@@ -63,7 +63,7 @@ let testGrid () =
     let gridStr = Grid.sprint None grid
     assertEqual "A...\n.B..\n..B.\nEGSD\n" gridStr
 
-    let markers = Map [{x = 4; y = 1}, "*"]
+    let markers = Map [mkCoord 4 1, "*"]
     //printGrid grid (Some markers)
     let gridStrM = Grid.sprint (Some markers) grid
     assertEqual "A..*\n.B..\n..B.\nEGSD\n" gridStrM
@@ -72,7 +72,7 @@ let testGrid () =
     grid <- Grid.clear c[2] false grid
     assertEqual grid.defaultValue (Grid.getString c[2] grid)
     let originalExt = grid.extent.Value
-    let c100 = {x = 100; y = 100}
+    let c100 = mkCoord 100 100
     grid <- Grid.setValue c100 (Glyph "X") grid
     assertEqual grid.extent.Value.max c100
     grid <- Grid.clear c100 true grid
