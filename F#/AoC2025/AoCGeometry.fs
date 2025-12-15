@@ -46,10 +46,10 @@ module Geometry =
             max: Coord
         }
 
-    type Extent1 =
+    type Range =
         {
-            minI: int64
-            maxI: int64
+            lo: int64
+            hi: int64
         }
 
     let mkCoord (x:int64) (y:int64): Coord =
@@ -82,6 +82,17 @@ module Geometry =
 
     let mkExtI minX minY maxX maxY =
         mkExtent [mkCoord minX minY; mkCoord maxX maxY]
+
+    let rec expandRangeToFit (rng:Range) (values:list<int64>) = 
+        if values.IsEmpty then rng
+        else
+            let lo = min rng.lo values.Head
+            let hi = max rng.hi values.Head
+            let expanded = {lo = lo; hi = hi}
+            expandRangeToFit expanded values.Tail
+
+    let mkRange (i1:int64) (i2:int64) =
+        {lo = min i1 i2; hi = max i1 i2}
 
     module Direction =
         let offset (d:Direction) =
@@ -311,3 +322,43 @@ module Geometry =
                             mResult.Add newE
                 Seq.toList mResult
 
+    module Range =
+        let isValid rng =
+            rng.lo <= rng.hi
+
+        let expandToFit rng (values: list<int64>) =
+            expandRangeToFit rng values
+        
+        let sizeOf (rng:Range) = rng.hi - rng.lo + 1L
+
+        let toSeq (rng:Range) = seq { rng.lo .. rng.hi }
+
+        let contains rng (i:int64): bool =
+            i <= rng.hi && i >= rng.lo
+
+        let intersect rng1 rng2 =
+            let commonLo = max rng1.lo rng2.lo
+            let commonHi = min rng1.hi rng2.hi
+            if commonHi < commonLo then None
+            else Some(mkRange commonLo commonHi)
+
+        let union rng1 rng2 = 
+            let intersectResult = intersect rng1 rng2
+            if rng1 = rng2 then [rng1]
+            elif intersectResult.IsNone then [rng1; rng2]
+            else
+                let mResult = ResizeArray<Range>()
+                let rInt = intersectResult.Value
+                mResult.Add rInt
+
+                let smallLo = min rng1.lo rng2.lo
+                let bigHi = max rng1.hi rng2.hi
+
+                if smallLo < rInt.lo then
+                    mResult.Add (mkRange smallLo (rInt.lo - 1L))
+
+                if bigHi > rInt.hi then
+                    mResult.Add (mkRange (rInt.hi + 1L) bigHi)
+
+                Seq.toList mResult
+    

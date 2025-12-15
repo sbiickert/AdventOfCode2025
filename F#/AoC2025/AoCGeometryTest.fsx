@@ -303,4 +303,64 @@ let testExtentUnion () =
 
 testExtentUnion()
 
+// d8888b.  .d8b.  d8b   db  d888b  d88888b
+// 88  `8D d8' `8b 888o  88 88' Y8b 88'    
+// 88oobY' 88ooo88 88V8o 88 88      88ooooo
+// 88`8b   88~~~88 88 V8o88 88  ooo 88~~~~~
+// 88 `88. 88   88 88  V888 88. ~8~ 88.    
+// 88   YD YP   YP VP   V8P  Y888P  Y88888P
+
+let testRangeIntersect () = 
+    let r1 = mkRange 0 10
+    let mutable r2 = mkRange 5 15
+    let mutable result = Range.intersect r1 r2
+    assertIsSome result
+    assertEqual result.Value (mkRange 5 10)
+
+    r2 <- mkRange 11 12
+    result <- Range.intersect r1 r2
+    assertIsNone result
+
+    r2 <- mkRange -1 11
+    result <- Range.intersect r1 r2
+    assertIsSome result
+    assertEqual result.Value (mkRange 0 10)
+
+    r2 <- mkRange -10 -8
+    result <- Range.intersect r1 r2
+    assertIsNone result
+
+    r2 <- mkRange -1 5
+    result <- Range.intersect r1 r2
+    assertIsSome result
+    assertEqual result.Value (mkRange 0 5)
+
+testRangeIntersect()
+
+let testRangeUnion () =
+    let r1 = mkRange 0 10
+    let mutable r2 = mkRange 5 15
+    let mutable results = Range.union r1 r2
+    let mutable expected = [mkRange 5 10; mkRange 0 4; mkRange 11 15]
+    assertEqual results expected
+    r2 <- mkRange 0 10
+    results <- Range.union r1 r2
+    expected <- [mkRange 0 10]
+    assertEqual results expected
+    r2 <- mkRange 0 6
+    results <- Range.union r1 r2
+    expected <- [mkRange 0 6; mkRange 7 10]
+    assertEqual results expected
+    r2 <- mkRange 5 6
+    results <- Range.union r1 r2
+    expected <- [mkRange 5 6; mkRange 0 4; mkRange 7 10]
+    assertEqual results expected
+    r2 <- mkRange 5 10
+    results <- Range.union r1 r2
+    expected <- [mkRange 5 10; mkRange 0 4]
+    assertEqual results expected
+
+   
+testRangeUnion()
+
 printfn $"**** All tests passed. ****"
