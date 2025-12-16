@@ -336,6 +336,11 @@ module Geometry =
         let contains rng (i:int64): bool =
             i <= rng.hi && i >= rng.lo
 
+        let add rng1 rng2 =
+            let lowLo = min rng1.lo rng2.lo
+            let highHi = max rng1.hi rng2.hi
+            mkRange lowLo highHi
+
         let intersect rng1 rng2 =
             let commonLo = max rng1.lo rng2.lo
             let commonHi = min rng1.hi rng2.hi
