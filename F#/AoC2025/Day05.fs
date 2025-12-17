@@ -11,24 +11,28 @@ let solvePartOne (freshRanges:list<Range>) (ingredientIDs:list<int64>) =
     |> List.length
 
 let solvePartTwo (freshRanges:list<Range>) =
-    let mutable uniqueRanges = freshRanges |> List.sortBy (fun rng -> rng.lo) |> List.toArray
-    let mutable rangeCount = -1
-    while uniqueRanges.Length <> rangeCount do
-        rangeCount <- uniqueRanges.Length
-        for i = 0 to uniqueRanges.Length - 2 do
-            let mutable shortCircuit = false
-            for j = i + 1 to uniqueRanges.Length - 1 do
-                if shortCircuit |> not then
-                    if uniqueRanges[i].hi < uniqueRanges[j].lo then
-                        shortCircuit <- true
-                    elif (Range.intersect uniqueRanges[i] uniqueRanges[j]).IsSome then
-                        let sum = Range.add uniqueRanges[i] uniqueRanges[j]
-                        uniqueRanges[i] <- sum
-                        uniqueRanges[j] <- {lo = 0; hi = -1} // isValid = false
-                        uniqueRanges <- uniqueRanges |> Array.filter Range.isValid
-                        shortCircuit <- true
+    let sortedRanges = 
+        freshRanges
+        |> List.sortBy (fun rng -> rng.lo) 
+        |> List.toArray
 
-    uniqueRanges |> Array.map Range.sizeOf |> Array.sum
+    for i = 0 to sortedRanges.Length - 2 do
+        let mutable shortCircuit = false
+        for j = i + 1 to sortedRanges.Length - 1 do
+            if shortCircuit |> not then
+                if Range.isValid sortedRanges[i] |> not then
+                    shortCircuit <- true
+                elif sortedRanges[i].hi < sortedRanges[j].lo then
+                    shortCircuit <- true
+                elif (Range.intersect sortedRanges[i] sortedRanges[j]).IsSome then
+                    let sum = Range.add sortedRanges[i] sortedRanges[j]
+                    sortedRanges[i] <- sum
+                    sortedRanges[j] <- {lo = 0; hi = -1} // isValid = false
+
+    sortedRanges 
+    |> Array.filter Range.isValid 
+    |> Array.map Range.sizeOf 
+    |> Array.sum
 
 let parseIngredientRanges lines =
     lines
