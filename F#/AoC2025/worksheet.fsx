@@ -1,8 +1,8 @@
 #load "AoCUtil.fs"
-#load "AoCGeometry.fs"
+// #load "AoCGeometry.fs"
 // #load "AoCGrid.fs"
 
-#load "Day05.fs"
+#load "Day06.fs"
 #time
-solveDay05 false |> ignore
+solveDay06 false |> ignore
 #time
