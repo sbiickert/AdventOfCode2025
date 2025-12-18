@@ -16,16 +16,14 @@ module Day06
             eq.values.[col,*] |> String.concat "" |> int64
 
         let doAddP1 (eq:Eq): int64 =
-            let mutable sum = 0L
-            for row = 0 to Array2D.length2 eq.values - 1 do
-                sum <- sum + getRowInt eq row
-            sum
-        
+            seq {0 .. Array2D.length2 eq.values - 1}
+            |> Seq.map (fun i -> getRowInt eq i)
+            |> Seq.sum
+       
         let doMulP1 (eq:Eq): int64 =
-            let mutable product = 1L
-            for row = 0 to Array2D.length2 eq.values - 1 do
-                product <- product * getRowInt eq row
-            product
+            seq {0 .. Array2D.length2 eq.values - 1}
+            |> Seq.map (fun i -> getRowInt eq i)
+            |> Seq.fold (fun acc each -> acc * each) 1
 
         let execP1 (eq:Eq): int64 =
             match eq.op with
@@ -34,16 +32,14 @@ module Day06
             | _ -> failwith "Bad operator"
 
         let doAddP2 (eq:Eq): int64 =
-            let mutable sum = 0L
-            for col = 0 to Array2D.length1 eq.values - 1 do
-                sum <- sum + getColInt eq col
-            sum
+            seq {0 .. Array2D.length1 eq.values - 1}
+            |> Seq.map (fun i -> getColInt eq i)
+            |> Seq.sum
         
         let doMulP2 (eq:Eq): int64 =
-            let mutable product = 1L
-            for col = 0 to Array2D.length1 eq.values - 1 do
-                product <- product * getColInt eq col
-            product
+            seq {0 .. Array2D.length1 eq.values - 1}
+            |> Seq.map (fun i -> getColInt eq i)
+            |> Seq.fold (fun acc each -> acc * each) 1
 
         let execP2 (eq:Eq): int64 =
             match eq.op with
@@ -60,9 +56,9 @@ module Day06
                 |> Seq.toArray
             let eqSizes =
                 opIndexes
-                |> Array.mapi (fun i (index,op) ->
+                |> Array.mapi (fun i (index,_) ->
                     if i < opIndexes.Length - 1 then
-                        let (nextIndex,nextOp) = opIndexes[i+1]
+                        let nextIndex,_ = opIndexes[i+1]
                         nextIndex - index - 1
                     else
                         lines[y].Length - index
