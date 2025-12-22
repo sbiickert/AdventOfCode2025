@@ -23,13 +23,10 @@ let mergedCircuits jbox1 jbox2 circuits =
         |> List.append [mergedCircuit]
 
 
-let solvePartOne isTest jboxes =
+let solvePartOne isTest jboxes (comboDistances: (double * Coord list) list) =
     let mutable circuits = jboxes |> List.map (fun jbox -> Set.ofList [jbox])
 
-    let mutable distances = 
-        AoC.Util.combinations 2 jboxes
-            |> List.map (fun combo -> (Coord.distance combo[0] combo[1]), combo)
-            |> List.sortBy (fun (dist, _) -> dist)
+    let mutable distances = comboDistances
 
     let iterCount = if isTest then 10 else 1000
     seq { 1 .. iterCount } |> Seq.iter (fun i -> 
@@ -44,13 +41,10 @@ let solvePartOne isTest jboxes =
     |> List.take 3
     |> List.fold (fun each acc -> each * acc) 1
 
-let solvePartTwo jboxes =
+let solvePartTwo jboxes (comboDistances: (double * Coord list) list) =
     let mutable circuits = jboxes |> List.map (fun jbox -> Set.ofList [jbox])
 
-    let mutable distances = 
-        AoC.Util.combinations 2 jboxes
-            |> List.map (fun combo -> (Coord.distance combo[0] combo[1]), combo)
-            |> List.sortBy (fun (dist, _) -> dist)
+    let mutable distances = comboDistances
 
     let mutable result = 0L
     while result = 0L do
@@ -75,9 +69,14 @@ let solveDay08 isTest: Unit =
         |> List.map (fun line -> line.Split "," |> Array.map int64)
         |> List.map (fun arr -> mkCoord3 arr[0] arr[1] arr[2])
 
-    let solution1 = solvePartOne isTest jboxes
+    let comboDistances = 
+        AoC.Util.combinations 2 jboxes
+            |> List.map (fun combo -> Coord.distance combo[0] combo[1], combo)
+            |> List.sortBy (fun (dist, _) -> dist)
+            
+    let solution1 = solvePartOne isTest jboxes comboDistances
     printfn $"Part One: {solution1}"
-    let solution2 = solvePartTwo jboxes
+    let solution2 = solvePartTwo jboxes comboDistances
     printfn $"Part Two: {solution2}"
 
     printfn "All done."
