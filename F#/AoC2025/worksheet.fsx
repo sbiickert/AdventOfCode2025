@@ -7,4 +7,6 @@
 // solveDay06 false |> ignore
 // #time
 
-seq {1 .. 4} |> Seq.toList
+let a:int array list = [[| 90 |]]
+
+seq {1 .. 4} |> Seq.toList |> AoC.Util.combinations 2

@@ -12,4 +12,5 @@ open AoC
 // solveDay04 false |> ignore   // Printing Department
 // solveDay05 false |> ignore   // Cafeteria
 // solveDay06 false |> ignore   // Trash Compactor
-solveDay07 false |> ignore   // Laboratories
+// solveDay07 false |> ignore   // Laboratories
+solveDay08 false |> ignore   // Playground
