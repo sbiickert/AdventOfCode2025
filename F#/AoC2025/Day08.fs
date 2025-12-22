@@ -44,8 +44,24 @@ let solvePartOne isTest jboxes =
     |> List.take 3
     |> List.fold (fun each acc -> each * acc) 1
 
-let solvePartTwo input =
-    2
+let solvePartTwo jboxes =
+    let mutable circuits = jboxes |> List.map (fun jbox -> Set.ofList [jbox])
+
+    let mutable distances = 
+        AoC.Util.combinations 2 jboxes
+            |> List.map (fun combo -> (Coord.distance combo[0] combo[1]), combo)
+            |> List.sortBy (fun (dist, _) -> dist)
+
+    let mutable result = 0L
+    while result = 0L do
+        let (dist, combo) = distances.Head
+        circuits <- mergedCircuits combo[0] combo[1] circuits
+        if result = 0 && circuits.Length = 1 then
+            result <- combo[0].x * combo[1].x 
+        distances <- distances.Tail
+
+    result
+
 
 let solveDay08 isTest: Unit =
     let day = 08
