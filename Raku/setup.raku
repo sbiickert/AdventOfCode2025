@@ -19,6 +19,6 @@ sub MAIN(Int $day, Str $challenge_name) {
 		$fh.say($line);
 	}
 	$fh.close;
-	shell("chmod +x $filename; open $filename");
+	shell("chmod +x $filename; code $filename");
 	
 }
