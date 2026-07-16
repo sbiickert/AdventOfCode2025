@@ -338,6 +338,12 @@ class Extent is export {
 	method area(--> Int) {
 		return $.width * $.height;
 	}
+
+	method centroid(--> Coord) {
+		my $mid_x = (($.max.x - $.min.x) / 2).int;
+		my $mid_y = (($.max.y - $.min.y) / 2).int;
+		return Coord.new(x => $mid_x, y => $mid_y);
+	}
 	
 	method all_coords(--> Array of Coord) {
 		my Coord @coords = ();

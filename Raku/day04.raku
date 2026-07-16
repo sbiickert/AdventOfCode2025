@@ -25,7 +25,7 @@ sub solve_part_one($map) {
     my $count = 0;
     for $map.coords('@') -> $coord {
         my @neighbors = $map.neighbors($coord);
-        my %bag = @neighbors.map(-> $c {$map.get_glyph($c)}).Bag;
+        my %bag = @neighbors.map(-> $c {$map.get($c)}).Bag;
         %bag{'@'} //= 0; # Set to 0 if not defined to suppress warning
         $count++ if %bag<@> < 4;
     }
@@ -33,21 +33,32 @@ sub solve_part_one($map) {
 }
 
 sub solve_part_two($map) {
-    my $remove_count = 0;
+    my $centroid = $map.extent.centroid;
     my $roll_count = -1;
     my @roll_coords = $map.coords('@');
-    while ($roll_count != @roll_coords.elems) {
-        $roll_count = @roll_coords.elems;
-        for @roll_coords -> $coord {
-            my @neighbors = $map.neighbors($coord);
-            my %bag = @neighbors.map(-> $c {$map.get_glyph($c)}).Bag;
+
+    # Sort from outside to center
+    my @sorted = @roll_coords.sort({$^a.manhattan_distance_to($centroid) <=> $^b.manhattan_distance_to($centroid)});
+
+    # Cache neighbors
+    my %neighbors = [];
+    for @sorted -> $coord {
+        %neighbors{$coord.Str} = $map.neighbors($coord);
+    }
+
+    while ($roll_count != @sorted.elems && @sorted.elems > 0) {
+        $roll_count = @sorted.elems;
+        for @sorted.end ... 0 -> $i {
+            my $coord = @sorted[$i];
+            my @neighbors = %neighbors{$coord.Str}.flat;
+            my %bag = @neighbors.map(-> $c {$map.get($c)}).Bag;
             %bag{'@'} //= 0; # Set to 0 if not defined to suppress warning
             if (%bag<@> < 4) {
                 $map.set($coord, '.');
-                $remove_count++;
+                @sorted.splice($i, 1);
             }
         }
-        @roll_coords = $map.coords('@');
     }
+    my $remove_count = @roll_coords.elems - @sorted.elems;
     say "Part Two: the number of removed rolls is $remove_count.";
 }
