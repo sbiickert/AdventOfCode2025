@@ -16,9 +16,10 @@ my @fresh = ();
 my @ingredients = ();
 
 parse_input;
+optimize_fresh;
 
 solve_part_one();
-#solve_part_two(@input);
+solve_part_two();
 
 exit( 0 );
 
@@ -37,9 +38,14 @@ sub solve_part_one() {
     say "Part One: the number of fresh ingredients is $fresh_count";
 }
 
-sub solve_part_two(@input) {
-	
-    say "Part Two:  ";
+sub solve_part_two() {
+
+    @fresh
+        ==> map(*.elems) 
+        ==> sum() 
+        ==> my $fresh_count;
+
+    say "Part Two: the total number of potential fresh ingredient ids is $fresh_count";
 }
 
 sub parse_input() {
@@ -53,4 +59,25 @@ sub parse_input() {
 
     # Ingredient IDs
     @input[1].flat ==> map(-> $s {$s.int}) ==> @ingredients;
+}
+
+sub optimize_fresh() {
+    my @sorted = @fresh.sort(*.min);
+    my @result = ();
+
+    my $current = @sorted.shift;
+
+    for @sorted -> $next {
+        # Check if the next range overlaps or touches the current one
+        if $next.min <= $current.max {
+            # Merge them by updating the max boundary
+            $current = $current.min .. max($current.max, $next.max);
+        } else {
+            # No overlap, save the current range and move to the next
+            @result.push($current);
+            $current = $next;
+        }
+    }
+    @result.push($current) if $current;
+    @fresh = @result;
 }
