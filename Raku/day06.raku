@@ -16,7 +16,7 @@ my @blocks = get_number_blocks(@input);
 @ops = @ops[0..*-2]; # Drop the bogus operator used for parsing
 
 solve_part_one();
-#solve_part_two(@input);
+solve_part_two();
 
 exit( 0 );
 
@@ -36,9 +36,22 @@ sub solve_part_one() {
     say "Part One: the total is $sum";
 }
 
-sub solve_part_two(@input) {
-	
-    say "Part Two:  ";
+sub solve_part_two() {
+    my $sum = 0;
+    for 0..@ops.end -> $i {
+        my $op = @ops[$i][1];
+        my $result;
+        my @block = pivot_number_block(@blocks[$i]);
+        if $op eq '+' {
+            $result = @block.sum;
+        }
+        else {
+            $result = [*] @block.flat;
+        }
+        $sum += $result;
+    }
+ 	
+    say "Part Two: the total is $sum";
 }
 
 sub get_operators($line) {
@@ -66,4 +79,18 @@ sub get_number_blocks(@lines) {
         @blocks.push(@block);
     }
     return @blocks;
+}
+
+sub pivot_number_block(@block) {
+    my @pivot = ();
+    my $cols = @block[0].chars-1;
+    my $rows = @block.end;
+    for 0..$cols -> $c {
+        my $str = '';
+        for 0..$rows -> $r {
+            $str = $str ~ substr(@block[$r], $c..$c);
+        }
+        @pivot.push($str);
+    }
+    return @pivot;
 }
