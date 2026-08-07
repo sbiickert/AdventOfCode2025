@@ -17,74 +17,34 @@ my @filtered = @input.grep(/\^|S/);
 my $grid = Grid.new(default => ' ', rule => AdjacencyRule::ROOK);
 $grid.load(@filtered);
 
-solve_part_one($grid);
-solve_part_two($grid);
+my ($s1, $s2) = solve($grid);
+say "Part One: the number of times the beam was split is $s1";
+say "Part Two: the total number of parallel universes is $s2";
 
 exit( 0 );
 
-sub solve_part_one($grid) {
-    my $count = 0;
+sub solve($grid) {
+    my $split_count = 0;
 	my $emit = $grid.coords('S').first;
-    my @beams = ($emit);
+    my %beams = ($emit => 1);
     for 0..$grid.extent.max.y -> $y {
         my %next_beams = ();
-        for @beams -> $beam {
+        for %beams.kv -> $beam_str, $beam_count {
+            my $beam = Coord.from_str($beam_str);
             my $down = $beam.offset("S");
             my $val = $grid.get($down);
             if ($val eq '^') {
                 my $down_l = $beam.offset('SW');
                 my $down_r = $beam.offset('SE');
-                %next_beams{$down_l} = $down_l;
-                %next_beams{$down_r} = $down_r;
-                $count++;
+                %next_beams{$down_l} += $beam_count;
+                %next_beams{$down_r} += $beam_count;
+                $split_count++;
             }
             else {
-                %next_beams{$down} = $down;
+                %next_beams{$down} += $beam_count;
             }
         }
-        @beams = %next_beams.values;
+        %beams = %next_beams;
     }
-    
-    say "Part One: the number of times the beam was split is $count";
-}
-
-sub solve_part_two($grid) {
-	my $emit = $grid.coords('S').first;
-    $grid.set($emit, 1);
-    for 0..$grid.extent.max.y -> $y {
-        for 0..$grid.extent.max.x -> $x {
-            my $beam = Coord.new(x => $x, y => $y);
-            my $grid_value = $grid.get($beam);
-            if ($grid_value eq '.' || $grid_value eq '^') { next }
-            my $down = $beam.offset("S");
-            my $down_value = $grid.get($down);
-            if ($down_value eq '^') {
-                my $down_l = $beam.offset('SW');
-                my $down_r = $beam.offset('SE');
-                add_to_coord($grid, $down_l, $grid_value);
-                add_to_coord($grid, $down_r, $grid_value);
-            }
-            else {
-                add_to_coord($grid, $down, $grid_value);
-            }
-        }
-    }
-
-    my $count = 0;
-    my $y = $grid.extent.max.y;
-    for 0..$grid.extent.max.x -> $x {
-        my $grid_value = $grid.get(Coord.new(x => $x, y => $y));
-        if ($grid_value eq '.' || $grid_value eq '^') { next }
-        $count += $grid_value;
-    }
-    say "Part Two: the total number of parallel universes is $count";
-}
-
-sub add_to_coord($grid, $coord, $value) {
-    my $grid_value = $grid.get($coord);
-    given $grid_value {
-        when '.' { $grid.set($coord, $value) }
-        when '^' { $grid.print; die "Trying to set on a splitter $coord"}
-        default  { $grid.set($coord, $value + $grid_value) }
-    }
+    return ($split_count, %beams.values.sum());
 }
