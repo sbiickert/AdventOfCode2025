@@ -20,9 +20,14 @@ solve_part_one(@coords);
 exit( 0 );
 
 sub solve_part_one(@coords) {
-	my @pairs = @coords.combinations(2);
-    my @areas = @pairs.map(->@p {Extent.from_coords(@p).area});
-    my $max = @areas.max;
+    my @pairs = @coords.combinations(2);
+    @pairs
+        ==> map(->@p {
+            # calculate area
+            (abs(@p[0].x - @p[1].x)+1) * (abs(@p[0].y - @p[1].y)+1);
+        })
+        ==> max()
+        ==> my $max;
 
     say "Part One: the largest area is $max ";
 }
