@@ -108,6 +108,17 @@ class Grid is export {
 	method neighbors(Coord $c --> Array) {
 		return $c.get_adjacent_coords($.rule);
 	}
+
+	method flood_fill(Coord $c, $value) {
+		# say "fill at $c with $value";
+		my $local_value = self.get($c);
+		self.set($c, $value);
+		my @neighbors = self.neighbors($c);
+		my $ext = self.extent;
+		for @neighbors -> $n {
+			self.flood_fill($n, $value) if self.get($n) eq $local_value && $ext.contains($n);
+		}
+	}
 	
 	method print(:%markers = {}, Bool :$invert_y = False) {
 		print self.sprint(markers => %markers, invert_y => $invert_y);

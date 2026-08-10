@@ -71,7 +71,7 @@ class Coord is export {
 	}
 	
 	# class method: construct from two Ints
-	method from_ints(::?CLASS:U $c2d: Int $x, Int $y) {
+	method from_ints(::?CLASS:U $c2d: Int $x, Int $y --> Coord) {
 		$c2d.new( x => $x, y => $y );
 	}
 	
@@ -82,6 +82,27 @@ class Coord is export {
 			$x = +~$0; $y = +~$1;
 		}
 		$c2d.new( x => $x, y => $y );
+	}
+
+	# class method: compression map used for working with large, sparse data
+	method create_compression_map(::?CLASS:U $c2d: @coords) {
+		my @x = @coords.map(*.x).Set.keys.sort;
+		my @y = @coords.map(*.y).Set.keys.sort;
+
+		my %x_map = ();
+		my %x_map_rev = ();
+		for 0..@x.end -> $x {
+			%x_map{$x} = @x[$x];
+			%x_map_rev{@x[$x]} = $x;
+		}
+		my %y_map = ();
+		my %y_map_rev = ();
+		for 0..@y.end -> $y {
+			%y_map{$y} = @y[$y];
+			%y_map_rev{@y[$y]} = $y;
+		}
+
+		return ('x_expand' => %x_map, 'x_compress' => %x_map_rev, 'y_expand' => %y_map, 'y_compress' => %y_map_rev);
 	}
 	
 	method Str { "[$.x,$.y]" }
