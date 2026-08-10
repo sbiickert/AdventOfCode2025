@@ -14,25 +14,28 @@ say "Advent of Code 2025, Day 8: Playground";
 
 my @boxes = parse_coords(@input);
 my @distances = calc_distances(@boxes);
-my @sorted = sorted_pairs_by_distance(@distances);
-my $limit = @boxes.elems == 20 ?? 10 !! 1000;
-my @circuits = build_circuits($limit);
+my @sorted = sorted_pairs_by_distance(@distances); # this is the slowest step
 
 solve_part_one();
-#solve_part_two();
+solve_part_two();
 
 exit( 0 );
 
 sub solve_part_one() {
-    my @sizes =@circuits[0..2].map(*.elems);
+    my $limit = @boxes.elems == 20 ?? 10 !! 1000;
+    my @circuits = build_circuits($limit, ());
+    my @sizes = @circuits[0..2].map(*.elems);
     my $product = [*] @sizes;
 
     say "Part One: the product of the sizes of the three largest circuits is $product";
 }
 
-sub solve_part_two(@input) {
-	
-    say "Part Two:  ";
+sub solve_part_two() {
+    my @last_merge_pair = ();
+    my @circuits = build_circuits(-1, @last_merge_pair);
+	my $product = @last_merge_pair[0].x * @last_merge_pair[1].x;
+
+    say "Part Two: the product of the x of the last two merged boxes is $product";
 }
 
 sub parse_coords(@input) {
@@ -49,12 +52,12 @@ sub calc_distances(@boxes) {
     for 0..@boxes.end -> $i {
         @distances[$i] = [];
         for 0..@boxes.end -> $j {
-            my $d = @boxes[$i].distance_to(@boxes[$j]);
+            # Short circuit calculating distances we won't use
+            my $d = $j <= $i ?? 0 !! @boxes[$i].distance_to(@boxes[$j]);
             @distances[$i][$j] = $d;
         }
     }
 
-    #dd @distances;
     return @distances;
 }
 
@@ -68,20 +71,20 @@ sub sorted_pairs_by_distance(@distances) {
     }
 
     my @sorted = @data.sort: {$^a{'d'} <=> $^b{'d'}};
-
-    # dd @sorted;
     return @sorted;
 }
 
-sub build_circuits($limit) {
+sub build_circuits($limit, @last_merge) {
     my @circuits = ();
     for 0..@boxes.end -> $id {
         @circuits.push( set($id) );
     }
 
-    for 0..$limit-1 -> $count {
+    my $real_limit = $limit > 1 ?? $limit !! @sorted.elems;
+
+    for 0..$real_limit-1 -> $count {
         my %distance_info = @sorted[$count]; # These are the ids of the two closest boxes and their distance
-        # say %distance_info;
+
         # Find the circuit with each id in it
         my $circuit_i = -1; my $circuit_j = -1;
         for 0..@circuits.end -> $c {
@@ -92,11 +95,14 @@ sub build_circuits($limit) {
         }
 
         if ($circuit_i != $circuit_j) {
-            # say "Merging $circuit_i, $circuit_j";
             @circuits[$circuit_i] = @circuits[$circuit_i] ∪ @circuits[$circuit_j];
             splice( @circuits, $circuit_j, 1);
-            # dd @circuits;
+            my $box_i = @boxes[%distance_info{'i'}];
+            my $box_j = @boxes[%distance_info{'j'}];
+            @last_merge = ($box_i, $box_j);
         }
+
+        last if @circuits.elems == 1;
     }
     return @circuits.sort(*.elems).reverse;
 }
