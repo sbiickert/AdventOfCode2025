@@ -61,7 +61,7 @@ class Coord is export {
 		$c2d.new(x => 0, y => 0);
 	}
 	
-	# class method: origin
+	# class method: offset
 	method get_offset(::?CLASS:U $c2d: Str $direction --> Coord) {
 		my $off = resolve_offset_alias($direction);
 		if $off {
@@ -148,6 +148,55 @@ class Coord is export {
 		#my $delta = $.delta($other);
 		#return abs($delta.x) + abs($delta.y);
 		return abs($other.x - $.x) + abs($other.y - $.y);
+	}
+}
+
+class Coord3D is export {
+	has Int $.x = 0;
+	has Int $.y = 0;
+	has Int $.z = 0;
+
+	# class method: origin
+	method origin(::?CLASS:U $c3d:) {
+		$c3d.new(x => 0, y => 0, z => 0);
+	}
+
+	# class method: construct from 3 ints
+	method from_ints(::?CLASS:U $c3d: Int $x, Int $y, Int $z) {
+		$c3d.new( x => $x, y => $y, z => $z );
+	}
+	
+	# class method: construct from a Str representation 
+	method from_str(::?CLASS:U $c3d: $str) {
+		my $x = 0; my $y = 0; my $z = 0;
+		if $str ~~ rx:s/\[(\d+)\, ?(\d+)\, ?(\d+)\]/ {
+			$x = +~$0; $y = +~$1; $z = +~$2;
+		}
+		$c3d.new( x => $x, y => $y, z => $z );
+	}
+	
+	method Str { "[$.x,$.y,$.z]" }
+	
+	multi method gist(Coord:U:) { self.^name }
+	multi method gist(Coord:D:) { "•[$.x, $.y, $.z]" }
+	
+	multi infix:<eqv>(Coord $l, Coord $r) { $l.x == $r.x && $l.y == $r.y && $l.z == $r.z }
+	
+	method add(Coord3D $other --> Coord3D) {
+		Coord3D.new( x => $.x + $other.x, y => $.y + $other.y, z => $.z + $other.z )
+	}
+	
+	method delta(Coord3D $other --> Coord3D) {
+		Coord3D.new( x => $other.x - $.x, y => $other.y - $.y, z => $other.z - $.z )
+	}
+	
+	method distance_to(Coord3D $other --> Num) {
+		my $delta = $.delta($other);
+		return sqrt($delta.x**2 + $delta.y**2 + $delta.z**2);
+	}
+	
+	method manhattan_distance_to(Coord3D $other --> Int) {
+		return abs($other.x - $.x) + abs($other.y - $.y) + abs($other.z - $.z);
 	}
 }
 
