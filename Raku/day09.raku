@@ -35,19 +35,18 @@ sub solve_part_one(@coords) {
 sub solve_part_two(@coords) {
 	my %comp_map = Coord.create_compression_map(@coords);
 	
-	my @comp_coords = @coords.map(->$c {
-		my $comp_x = %comp_map{'x_compress'}{$c.x};
-		my $comp_y = %comp_map{'y_compress'}{$c.y};
-		Coord.new( x => $comp_x, y => $comp_y);
-	});
+	my @comp_coords = @coords.map(->$c {compress_coord($c, %comp_map)});
 
 	my $grid = paint_grid(@comp_coords);
-	# $grid.print;
-	# die;
 
 	my $max_area = 0;
 	my @pairs = @comp_coords.combinations(2);
 	for @pairs -> @pair {
+		# Check the area of this extent first
+		my $exp_ext = Extent.from_coords((expand_coord(@pair[0], %comp_map), expand_coord(@pair[1], %comp_map)));
+		next if $exp_ext.area <= $max_area;
+
+		# Check for all '#'
 		my $ext = Extent.from_coords(@pair);
 		my $ok = True;
 		for $ext.all_coords -> $c {
@@ -56,14 +55,10 @@ sub solve_part_two(@coords) {
 				last;
 			}
 		}
+
 		if ($ok) {
-			my $expanded_min = Coord.from_ints(%comp_map{'x_expand'}{$ext.min.x}, %comp_map{'y_expand'}{$ext.min.y});
-			my $expanded_max = Coord.from_ints(%comp_map{'x_expand'}{$ext.max.x}, %comp_map{'y_expand'}{$ext.max.y});
-			my $expanded_ext = Extent.from_coords(($expanded_min, $expanded_max));
-			if ($expanded_ext.area > $max_area) {
-				$max_area = $expanded_ext.area ;
-				say $max_area;
-			}
+			$max_area = $exp_ext.area ;
+			say $max_area;
 		}
 	}
 	
@@ -112,4 +107,16 @@ sub walk(Grid $grid, Coord $from, Coord $to) {
 		$grid.set($pos.coord, '#');
 		$pos = $pos.move_forward(1);
 	}
+}
+
+sub compress_coord(Coord $c, %comp_map) {
+	my $comp_x = %comp_map{'x_compress'}{$c.x};
+	my $comp_y = %comp_map{'y_compress'}{$c.y};
+	Coord.new( x => $comp_x, y => $comp_y);
+}
+
+sub expand_coord(Coord $c, %comp_map) {
+	my $exp_x = %comp_map{'x_expand'}{$c.x};
+	my $exp_y = %comp_map{'y_expand'}{$c.y};
+	Coord.new( x => $exp_x, y => $exp_y);
 }
