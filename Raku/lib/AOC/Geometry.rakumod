@@ -423,6 +423,22 @@ class Extent is export {
 		}
 		return @coords;
 	}
+
+	method edge_coords(--> Array of Coord) {
+		my Coord @coords = ();
+		my $xmin = $.min.x;
+		my $xmax = $.max.x;
+		my $ymin = $.min.y;
+		my $ymax = $.max.y;
+		for $xmin .. $xmax X $ymin .. $ymax -> $pair {
+			if ($pair[0] == $xmin || $pair[0] == $xmax  
+				|| $pair[1] == $ymin || $pair[1] == $ymax )
+			{
+				@coords.push( Coord.new( x => $pair[0], y => $pair[1] ) );
+			}
+		}
+		return @coords;
+	}
 	
 	method contains( Coord $coord --> Bool ) {
 		if $.is_empty { return False }

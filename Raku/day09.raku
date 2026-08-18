@@ -48,13 +48,7 @@ sub solve_part_two(@coords) {
 
 		# Check for all '#'
 		my $ext = Extent.from_coords(@pair);
-		my $ok = True;
-		for $ext.all_coords -> $c {
-			if ($grid.get($c) ne '#') {
-				$ok = False;
-				last;
-			}
-		}
+		my $ok = $ext.edge_coords.map({$grid.get($_) eq '#'}).all;
 
 		if ($ok) {
 			$max_area = $exp_ext.area ;
