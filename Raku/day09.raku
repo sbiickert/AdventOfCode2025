@@ -48,7 +48,22 @@ sub solve_part_two(@coords) {
 
 		# Check for all '#'
 		my $ext = Extent.from_coords(@pair);
-		my $ok = $ext.edge_coords.map({$grid.get($_) eq '#'}).all;
+		my $ok = True;
+
+		my $xmin = $ext.min.x;
+		my $xmax = $ext.max.x;
+		my $ymin = $ext.min.y;
+		my $ymax = $ext.max.y;
+		for $xmin .. $xmax X $ymin .. $ymax -> $xy {
+			if ($xy[0] == $xmin || $xy[0] == $xmax  
+				|| $xy[1] == $ymin || $xy[1] == $ymax )
+			{
+				if $grid.get_xy($xy[0], $xy[1]) ne '#' {
+					$ok = False;
+					last;
+				}
+			}
+		}
 
 		if ($ok) {
 			$max_area = $exp_ext.area ;
@@ -67,8 +82,15 @@ sub parse_coords(@input) {
 	return @coords;
 }
 
-sub paint_grid(@comp_coords --> Grid) {
-	my $grid = Grid.new( default => '.', rule => AdjacencyRule::ROOK);
+sub paint_grid(@comp_coords --> AGrid) {
+	# Get the max compressed X and Y value
+	my $max_x <== max() <== @comp_coords.map(*.x);
+	my $max_y <== max() <== @comp_coords.map(*.y);
+	
+	my $grid = AGrid.new( default => '.',
+						 rule => AdjacencyRule::ROOK,
+						 x => $max_x.first,
+						 y => $max_y.first );
 	
 	# Mark the corners
 	for @comp_coords -> $c {
@@ -93,7 +115,7 @@ sub paint_grid(@comp_coords --> Grid) {
 	return $grid;
 }
 
-sub walk(Grid $grid, Coord $from, Coord $to) {
+sub walk(AGrid $grid, Coord $from, Coord $to) {
 	my $segment = Segment.new( from => $from, to => $to );
 	my $pos = Position.new(coord => $from, dir => $segment.direction);
 	$pos = $pos.move_forward();

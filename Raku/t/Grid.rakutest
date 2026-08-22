@@ -4,11 +4,12 @@ use AOC::Geometry;
 use AOC::Grid;
 use Test;
 
-my $NUM_TESTS := 24;
+my $NUM_TESTS := 28;
 plan $NUM_TESTS;
 
 # Call testing functions
 test_grid();
+test_agrid();
 
 done-testing;
 
@@ -113,4 +114,16 @@ sub test_grid() {
 	$g2d.clear(Coord.from_ints(100, 100), reset_extent => True);
 	ok $g2d.extent eqv $e_original, "Extent after clear is small";
 
+}
+
+
+sub test_agrid() {
+	say "\nTesting AGrid";
+	# g2_make g2_get_default g2_get_rule
+	my $g2d = AGrid.new(default => '.', rule => AdjacencyRule::ROOK, x => 10, y => 8);
+	ok $g2d.default eq '.' or diag "Getting default";
+	ok $g2d.rule eq AdjacencyRule::ROOK or diag "Getting rule";
+	my $ext = $g2d.extent();
+	ok !$ext.is_empty or diag 'Check initial extent is not empty';
+	ok $ext.area == 99 or diag "Area $ext.area is not (x+1) * (y+1)";
 }
