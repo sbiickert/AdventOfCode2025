@@ -1,10 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "UXPb07b4/Kk=",
+  "dgSpecHash": "vJO5UWRi9qE=",
   "success": true,
   "projectFilePath": "/Users/sjb/Developer/Advent of Code/2025/AdventOfCode2025/F#/AoC2025/AoC2025.fsproj",
   "expectedPackageFiles": [
-    "/Users/sjb/.nuget/packages/fsharp.core/10.0.101/fsharp.core.10.0.101.nupkg.sha512"
+    "/Users/sjb/.nuget/packages/fsharp.core/10.1.201/fsharp.core.10.1.201.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data/8.1.1/fsharp.data.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.csv.core/8.1.1/fsharp.data.csv.core.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.html.core/8.1.1/fsharp.data.html.core.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.http/8.1.1/fsharp.data.http.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.json.core/8.1.1/fsharp.data.json.core.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.runtime.utilities/8.1.1/fsharp.data.runtime.utilities.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.worldbank.core/8.1.1/fsharp.data.worldbank.core.8.1.1.nupkg.sha512",
+    "/Users/sjb/.nuget/packages/fsharp.data.xml.core/8.1.1/fsharp.data.xml.core.8.1.1.nupkg.sha512"
   ],
   "logs": []
 }
