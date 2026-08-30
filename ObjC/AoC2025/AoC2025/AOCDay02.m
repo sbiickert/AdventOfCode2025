@@ -11,7 +11,8 @@
 
 @interface AOCDay02 ()
 
-@property NSRegularExpression *idRegex;
+@property NSRegularExpression *idRegex1;
+@property NSRegularExpression *idRegex2;
 
 @end
 
@@ -21,10 +22,12 @@
 	self = [super initWithDay:2 name:@"Gift Shop"];
 	
 	NSError *err;
-	NSString *pattern = @"^(\\d+)\\1$";
-	_idRegex = [NSRegularExpression regularExpressionWithPattern:pattern
-														 options:0
-														   error:&err];
+	_idRegex1 = [NSRegularExpression regularExpressionWithPattern:@"^(\\d+)\\1$"
+														  options:0
+															error:&err];
+	_idRegex2 = [NSRegularExpression regularExpressionWithPattern:@"^(\\d+)\\1{1,}$"
+														  options:0
+															error:&err];
 
 	return self;
 }
@@ -37,7 +40,7 @@
 	NSArray<NSValue *> *ranges = [self parseRanges: rangeString];
 	
 	result.part1 = [self solvePartOne: ranges];
-	result.part2 = [self solvePartTwo: input];
+	result.part2 = [self solvePartTwo: ranges];
 	
 	return result;
 }
@@ -49,7 +52,7 @@
 		NSRange r = v.rangeValue;
 		
 		for (NSInteger i = r.location; i <= NSMaxRange(r); i++) {
-			if ([self isIdValid:i]) {
+			if ([self isIdValid1:i]) {
 				sum += i;
 			}
 		}
@@ -58,17 +61,37 @@
 	return [NSString stringWithFormat:@"%ld", (long)sum];
 }
 
-- (NSString *)solvePartTwo:(NSArray<NSString *> *)input {
+- (NSString *)solvePartTwo:(NSArray<NSValue *> *)ranges {
+	NSInteger sum = 0;
 	
-	return @"World";
+	for (NSValue *v in ranges) {
+		NSRange r = v.rangeValue;
+		
+		for (NSInteger i = r.location; i <= NSMaxRange(r); i++) {
+			if ([self isIdValid2:i]) {
+				sum += i;
+			}
+		}
+	}
+	
+	return [NSString stringWithFormat:@"%ld", (long)sum];
 }
 
-- (BOOL)isIdValid:(NSInteger)id {
+- (BOOL)isIdValid1:(NSInteger)id {
 	NSString *idStr = [NSString stringWithFormat:@"%ld", (long)id];
 	if (idStr.length % 2 == 1) {
 		return NO; // Odd number of characters
 	}
-	if ([idStr match:self.idRegex] == nil) {
+	if ([idStr match:self.idRegex1] == nil) {
+		return NO;
+	}
+	
+	return YES;
+}
+
+- (BOOL)isIdValid2:(NSInteger)id {
+	NSString *idStr = [NSString stringWithFormat:@"%ld", (long)id];
+	if ([idStr match:self.idRegex2] == nil) {
 		return NO;
 	}
 	
