@@ -39,46 +39,39 @@
 	NSString *rangeString = input.firstObject;
 	NSArray<NSValue *> *ranges = [self parseRanges: rangeString];
 	
-	result.part1 = [self solvePartOne: ranges];
-	result.part2 = [self solvePartTwo: ranges];
+	NSArray<NSString *> *results = [self solveParts:ranges];
+	result.part1 = results.firstObject;
+	result.part2 = results.lastObject;
 	
 	return result;
 }
 
-- (NSString *)solvePartOne:(NSArray<NSValue *> *)ranges {
-	NSInteger sum = 0;
-	
+- (NSArray<NSString *> *)solveParts:(NSArray<NSValue *> *)ranges {
+	NSInteger sum1 = 0;
+	NSInteger sum2 = 0;
+
 	for (NSValue *v in ranges) {
 		NSRange r = v.rangeValue;
 		
 		for (NSInteger i = r.location; i <= NSMaxRange(r); i++) {
-			if ([self isIdValid1:i]) {
-				sum += i;
+			NSString *idStr = [NSString stringWithFormat:@"%ld", (long)i];
+			BOOL v1 = [self isIdValid1:idStr];
+			if (v1) {
+				sum1 += i;
+			}
+			if (v1 || [self isIdValid2:idStr]) {
+				sum2 += i;
 			}
 		}
 	}
 	
-	return [NSString stringWithFormat:@"%ld", (long)sum];
+	return [NSArray arrayWithObjects:
+			[NSString stringWithFormat:@"%ld", (long)sum1],
+			[NSString stringWithFormat:@"%ld", (long)sum2],
+			nil];
 }
 
-- (NSString *)solvePartTwo:(NSArray<NSValue *> *)ranges {
-	NSInteger sum = 0;
-	
-	for (NSValue *v in ranges) {
-		NSRange r = v.rangeValue;
-		
-		for (NSInteger i = r.location; i <= NSMaxRange(r); i++) {
-			if ([self isIdValid2:i]) {
-				sum += i;
-			}
-		}
-	}
-	
-	return [NSString stringWithFormat:@"%ld", (long)sum];
-}
-
-- (BOOL)isIdValid1:(NSInteger)id {
-	NSString *idStr = [NSString stringWithFormat:@"%ld", (long)id];
+- (BOOL)isIdValid1:(NSString *)idStr {
 	if (idStr.length % 2 == 1) {
 		return NO; // Odd number of characters
 	}
@@ -89,8 +82,7 @@
 	return YES;
 }
 
-- (BOOL)isIdValid2:(NSInteger)id {
-	NSString *idStr = [NSString stringWithFormat:@"%ld", (long)id];
+- (BOOL)isIdValid2:(NSString *)idStr {
 	if ([idStr match:self.idRegex2] == nil) {
 		return NO;
 	}
