@@ -10,5 +10,6 @@
 + (NSInteger)gcdOfX:(NSInteger)x andY:(NSInteger)y;
 + (NSInteger)lcmOfX:(NSInteger)x andY:(NSInteger)y;
 + (NSInteger)lcmIn:(NSArray<NSNumber *>*)values;
++ (NSInteger)powerOfBase:(NSInteger)base exponent:(NSInteger)exponent;
 
 @end

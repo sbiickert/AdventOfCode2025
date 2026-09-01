@@ -35,4 +35,12 @@
 	return running;
 }
 
++ (NSInteger)powerOfBase:(NSInteger)base exponent:(NSInteger)exponent {
+	NSInteger result = 1;
+	for (NSInteger i = 0; i < exponent; i++) {
+		result *= base;
+	}
+	return result;
+}
+
 @end
