@@ -38,10 +38,13 @@
 
 - (void)load:(NSArray<NSString *> *)data {
 	[self clearAll];
+	NSString *def = (NSString *)self.defaultValue;
 	for (NSInteger row = 0; row < data.count; row++) {
 		NSArray<NSString *> *letters = data[row].allCharacters;
 		for (NSInteger col = 0; col < letters.count; col++) {
-			[self setObject:letters[col] atCoord:[AOCCoord x:col y:row]];
+			if ([letters[col] isEqualToString:def] == NO) {
+				[self setObject:letters[col] atCoord:[AOCCoord x:col y:row]];
+			}
 		}
 	}
 }
