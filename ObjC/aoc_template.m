@@ -26,12 +26,12 @@
 
 - (NSString *)solvePartOne:(NSArray<NSString *> *)input {
 	
-	return @"Hello";
+	return [NSString stringWithFormat: @"Hello %ld", (long)13];
 }
 
 - (NSString *)solvePartTwo:(NSArray<NSString *> *)input {
 	
-	return @"World";
+	return [NSString stringWithFormat: @"World %ld", (long)42];
 }
 
 @end
