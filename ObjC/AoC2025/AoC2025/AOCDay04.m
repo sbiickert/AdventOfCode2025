@@ -30,16 +30,16 @@
 }
 
 - (NSString *)solvePartOne:(AOCGrid *)grid {
-	NSMutableArray<AOCCoord *> *remove = [NSMutableArray array];
+	NSInteger removeCount = 0;
 	
 	for (AOCCoord *c in grid.coords) {
 		NSArray <AOCCoord *> *neighbors = [grid adjacentTo:c withValue:@"@"];
 		if (neighbors.count < 4) {
-			[remove addObject:c];
+			removeCount++;
 		}
 	}
 	
-	return [NSString stringWithFormat:@"%ld", (long)remove.count];
+	return [NSString stringWithFormat:@"%ld", (long)removeCount];
 }
 
 - (NSString *)solvePartTwo:(AOCGrid *)grid {
@@ -47,16 +47,15 @@
 	NSInteger removeCount = -1;
 	
 	while (removeCount != 0) {
-		NSMutableArray<AOCCoord *> *remove = [NSMutableArray array];
+		removeCount = 0;
 		
 		for (AOCCoord *c in grid.coords) {
 			NSArray <AOCCoord *> *neighbors = [grid adjacentTo:c withValue:@"@"];
 			if (neighbors.count < 4) {
-				[remove addObject:c];
+				removeCount++;
 				[grid clearAtCoord:c];
 			}
 		}
-		removeCount = remove.count;
 		total += removeCount;
 	}
 	
