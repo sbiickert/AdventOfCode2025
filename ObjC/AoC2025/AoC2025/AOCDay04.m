@@ -39,20 +39,28 @@
 		}
 	}
 	
-//	NSMutableDictionary<AOCCoord *, NSString *> *markers = [NSMutableDictionary dictionary];
-//	for (AOCCoord *c in remove) {
-//		[markers setObject:@"x" forKey:c];
-//	}
-//	
-//	[grid print];
-//	[grid printWithOverlay:markers];
-	
 	return [NSString stringWithFormat:@"%ld", (long)remove.count];
 }
 
 - (NSString *)solvePartTwo:(AOCGrid *)grid {
+	NSInteger total = 0;
+	NSInteger removeCount = -1;
 	
-	return @"World";
+	while (removeCount != 0) {
+		NSMutableArray<AOCCoord *> *remove = [NSMutableArray array];
+		
+		for (AOCCoord *c in grid.coords) {
+			NSArray <AOCCoord *> *neighbors = [grid adjacentTo:c withValue:@"@"];
+			if (neighbors.count < 4) {
+				[remove addObject:c];
+				[grid clearAtCoord:c];
+			}
+		}
+		removeCount = remove.count;
+		total += removeCount;
+	}
+	
+	return [NSString stringWithFormat:@"%ld", (long)total];
 }
 
 @end
