@@ -51,10 +51,8 @@
 				BOOL isSplitter = [[grid stringAtCoord: down] isEqualToString:@"^"];
 				if (isSplitter) {
 					splitCount++;
-					AOCCoord *downLeft = [c offset:SW];
-					AOCCoord *downRight = [c offset:SE];
-					[grid setObject:@"|" atCoord:downLeft];
-					[grid setObject:@"|" atCoord:downRight];
+					[grid setObject:@"|" atCoord: [c offset:SW]];
+					[grid setObject:@"|" atCoord: [c offset:SE]];
 				}
 				else {
 					[grid setObject:@"|" atCoord:down];
@@ -62,18 +60,55 @@
 			}
 		}
 	}
-		
+			
 	return [NSString stringWithFormat: @"Number of splits %ld", (long)splitCount];
 }
 
 - (NSString *)solvePartTwo:(AOCGrid *)grid startPosition:(AOCCoord *)start {
 	NSDictionary<AOCCoord *, NSNumber *> *beams = [NSDictionary dictionaryWithObject:@"1" forKey:start];
+	AOCExtent *ext = [grid extent];
+	NSInteger row = start.y;
 	
-//	while (beams.count > 0) {
-//		
-//	}
+	while (row <= ext.max.y) {
+		NSMutableDictionary<AOCCoord *, NSNumber *> *nextBeams = [NSMutableDictionary dictionary];
+		for (AOCCoord *c in beams) {
+			AOCCoord *down = [c offset:DOWN];
+			BOOL isSplitter = [[grid stringAtCoord: down] isEqualToString:@"^"];
+			if (isSplitter) {
+				for (NSString *dir in @[SW, SE]) {
+					AOCCoord *off = [c offset:dir];
+					NSNumber *countOff = [nextBeams objectForKey:off];
+					if (countOff != nil) {
+						countOff = [NSNumber numberWithInteger: countOff.integerValue + beams[c].integerValue];
+					}
+					else {
+						countOff = beams[c];
+					}
+					[nextBeams setObject:countOff forKey:off];
+				}
+			}
+			else {
+				NSNumber *countOff = [nextBeams objectForKey:down];
+				if (countOff != nil) {
+					countOff = [NSNumber numberWithInteger: countOff.integerValue + beams[c].integerValue];
+				}
+				else {
+					countOff = beams[c];
+				}
+				[nextBeams setObject:countOff forKey:down];
+			}
+		}
+		
+		beams = nextBeams;
+		row ++;
+	}
+	
+	NSInteger total = 0;
+	for (AOCCoord *c in beams) {
+		total += beams[c].integerValue;
+	}
 
-	return [NSString stringWithFormat: @"World %ld", (long)42];
+	return [NSString stringWithFormat: @"Number of timelines is %ld", (long)total];
 }
 
 @end
