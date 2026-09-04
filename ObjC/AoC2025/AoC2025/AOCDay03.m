@@ -35,7 +35,7 @@
 	
 	for (NSArray <NSNumber *> *jolts in joltages) {
 		NSArray <NSNumber *> *best = [self selectBest:2 in:jolts];
-		NSInteger value = [self joinJoltages:best];
+		NSInteger value = [AOCMath joinDigits:best];
 		sum += value;
 	}
 	
@@ -47,7 +47,7 @@
 	
 	for (NSArray <NSNumber *> *jolts in joltages) {
 		NSArray <NSNumber *> *best = [self selectBest:12 in:jolts];
-		NSInteger value = [self joinJoltages:best];
+		NSInteger value = [AOCMath joinDigits:best];
 		sum += value;
 	}
 	
@@ -73,17 +73,6 @@
 	}
 	
 	return work;
-}
-
-- (NSInteger)joinJoltages:(NSArray <NSNumber *> *)joltages {
-	NSInteger value = 0;
-	
-	for (NSInteger i = joltages.count-1; i >= 0; i--) {
-		NSInteger exponent = (joltages.count-1) - i;
-		value += joltages[i].integerValue * [AOCMath powerOfBase:10 exponent:exponent];
-	}
-	
-	return value;
 }
 
 - (NSArray<NSArray <NSNumber *> *> *)parseJoltages:(NSArray<NSString *> *)input {
