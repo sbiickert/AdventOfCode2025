@@ -35,6 +35,19 @@
 	return running;
 }
 
+
++ (NSInteger)joinDigits:(NSArray <NSNumber *> *)digits {
+	NSInteger value = 0;
+	
+	for (NSInteger i = digits.count-1; i >= 0; i--) {
+		NSInteger exponent = (digits.count-1) - i;
+		value += digits[i].integerValue * [AOCMath powerOfBase:10 exponent:exponent];
+	}
+	
+	return value;
+}
+
+
 + (NSInteger)powerOfBase:(NSInteger)base exponent:(NSInteger)exponent {
 	NSInteger result = 1;
 	for (NSInteger i = 0; i < exponent; i++) {
