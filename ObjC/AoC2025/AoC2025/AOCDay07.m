@@ -73,29 +73,15 @@
 		NSMutableDictionary<AOCCoord *, NSNumber *> *nextBeams = [NSMutableDictionary dictionary];
 		for (AOCCoord *c in beams) {
 			AOCCoord *down = [c offset:DOWN];
+			NSInteger count = beams[c].integerValue;
 			BOOL isSplitter = [[grid stringAtCoord: down] isEqualToString:@"^"];
 			if (isSplitter) {
 				for (NSString *dir in @[SW, SE]) {
-					AOCCoord *off = [c offset:dir];
-					NSNumber *countOff = [nextBeams objectForKey:off];
-					if (countOff != nil) {
-						countOff = [NSNumber numberWithInteger: countOff.integerValue + beams[c].integerValue];
-					}
-					else {
-						countOff = beams[c];
-					}
-					[nextBeams setObject:countOff forKey:off];
+					[self addBeams:count at:[c offset:dir] to:nextBeams];
 				}
 			}
 			else {
-				NSNumber *countOff = [nextBeams objectForKey:down];
-				if (countOff != nil) {
-					countOff = [NSNumber numberWithInteger: countOff.integerValue + beams[c].integerValue];
-				}
-				else {
-					countOff = beams[c];
-				}
-				[nextBeams setObject:countOff forKey:down];
+				[self addBeams:count at:down to:nextBeams];
 			}
 		}
 		
@@ -109,6 +95,17 @@
 	}
 
 	return [NSString stringWithFormat: @"Number of timelines is %ld", (long)total];
+}
+
+- (void)addBeams:(NSInteger)count at:(AOCCoord *)c to:(NSMutableDictionary *)dict {
+	NSNumber *countAt = [dict objectForKey:c];
+	if (countAt != nil) {
+		countAt = [NSNumber numberWithInteger: countAt.integerValue + count];
+	}
+	else {
+		countAt = [NSNumber numberWithInteger: count];
+	}
+	[dict setObject:countAt forKey:c];
 }
 
 @end
