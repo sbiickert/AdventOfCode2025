@@ -94,6 +94,17 @@
 
 - (NSArray<JBGap *> *)calculateGaps:(NSArray<AOCCoord3D *> *)boxes {
 	NSMutableArray<JBGap *> *result = [NSMutableArray array];
+	
+	// Comparator is faster than descriptor
+//	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"distance" ascending:YES];
+	
+	NSComparator comparator = ^NSComparisonResult(JBGap *jb1, JBGap *jb2) {
+		NSComparisonResult r = NSOrderedSame;
+		if (jb1.distance < jb2.distance) { r = NSOrderedAscending; }
+		else if (jb1.distance > jb2.distance) { r = NSOrderedDescending; }
+		return r;
+	};
+
 
 	for (NSInteger i = 0; i < boxes.count-1; i++) {
 		for (NSInteger j = i + 1; j < boxes.count; j++) {
@@ -102,11 +113,8 @@
 		}
 	}
 	
-	[result sortUsingComparator:^NSComparisonResult(JBGap *g1, JBGap *g2) {
-		NSNumber *n1 = [NSNumber numberWithDouble:g1.distance];
-		NSNumber *n2 = [NSNumber numberWithDouble:g2.distance];
-		return [n1 compare: n2];
-	}];
+	[result sortUsingComparator:comparator];
+//	[result sortUsingDescriptors:@[descriptor]];
 
 	return result;
 }
