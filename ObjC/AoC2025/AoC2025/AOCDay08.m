@@ -36,7 +36,7 @@
 	if (boxes.count > 20) { limit = 1000; }
 	
 	result.part1 = [self solvePartOne: boxes gaps:gaps limit: limit];
-	result.part2 = [self solvePartTwo: input];
+	result.part2 = [self solvePartTwo: boxes gaps:gaps];
 	
 	return result;
 }
@@ -63,9 +63,10 @@
 	}
 	
 	[circuits sortUsingComparator:^NSComparisonResult(NSSet *s1, NSSet *s2) {
-		NSNumber *n1 = [NSNumber numberWithInteger: s1.count];
-		NSNumber *n2 = [NSNumber numberWithInteger: s2.count];
-		return [n2 compare:n1]; // Descending
+		NSComparisonResult r = NSOrderedSame;
+		if (s1.count > s2.count) { r = NSOrderedAscending; }
+		else if (s1.count < s2.count) { r = NSOrderedDescending; }
+		return r;
 	}];
 	
 	NSInteger product = circuits[0].count * circuits[1].count * circuits[2].count;
@@ -73,9 +74,32 @@
 	return [NSString stringWithFormat: @"The product of sizes of three biggest circuits is %ld", (long)product];
 }
 
-- (NSString *)solvePartTwo:(NSArray<NSString *> *)input {
+- (NSString *)solvePartTwo:(NSArray<AOCCoord3D *> *)boxes
+					  gaps:(NSArray<JBGap *> *)gaps {
+	NSMutableArray<NSSet<AOCCoord3D *> *> *circuits = [self buildCircuits:boxes];
 	
-	return [NSString stringWithFormat: @"World %ld", (long)42];
+	JBGap *lastGap = nil;
+	
+	for (JBGap *gap in gaps) {
+		NSSet *circuit1 = [self findJunctionBox:gap.from in:circuits];
+		NSSet *circuit2 = [self findJunctionBox:gap.to in:circuits];
+		
+		if (circuit1 != circuit2) {
+			NSSet *merged = [circuit1 setByAddingObjectsFromSet:circuit2];
+			[circuits removeObject:circuit1];
+			[circuits removeObject:circuit2];
+			[circuits addObject:merged];
+		}
+		
+		if (circuits.count == 1) {
+			lastGap = gap;
+			break;
+		}
+	}
+	
+	NSInteger productX = lastGap.from.x * lastGap.to.x;
+
+	return [NSString stringWithFormat: @"The product of the X coords of the last two boxes is %ld", (long)productX];
 }
 
 - (NSArray<AOCCoord3D *> *)parseJunctionBoxes:(NSArray<NSString *> *)input {
@@ -140,8 +164,6 @@
 @end
 
 @implementation JBGap
-
-
 
 - (JBGap *)initFrom:(AOCCoord3D *)c1 to:(AOCCoord3D *)c2 {
 	self = [super init];
