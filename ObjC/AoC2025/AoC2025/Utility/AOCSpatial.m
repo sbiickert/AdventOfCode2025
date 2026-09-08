@@ -355,6 +355,76 @@ static NSDictionary<NSString *, NSString*> *_aliases = nil;
 
 /* *************************************************
  
+ AOCSegment
+ 
+ ************************************************* */
+
+@implementation AOCSegment
+
++ (AOCSegment *)segmentFrom:(AOCCoord *)from to:(AOCCoord *)to {
+	AOCSegment *s = [[AOCSegment alloc] initFrom:from to:to];
+	return s;
+}
+
+
+- (AOCSegment *)initFrom:(AOCCoord *)from to:(AOCCoord *)to {
+	self = [super init];
+	
+	_from = from;
+	_to = to;
+	
+	return self;
+}
+
+- (NSString *)direction {
+	if (self.isHorizontal) {
+		return self.from.x < self.to.x ? EAST : WEST;
+	}
+	else if (self.isVertical) {
+		return self.from.y < self.to.y ? SOUTH : NORTH;
+	}
+	
+	if (self.from.x < self.to.x) {
+		return self.from.y < self.to.y ? SE : NE;
+	}
+	return self.from.y < self.to.y ? SW : NW;
+}
+
+
+- (BOOL)isHorizontal {
+	return self.from.y == self.to.y;
+}
+
+- (BOOL)isVertical {
+	return self.from.x == self.to.x;
+}
+
+- (nonnull id)copyWithZone:(nullable NSZone *)zone {
+	AOCSegment *copy = [[AOCSegment allocWithZone:zone] initFrom:self.from to:self.to];
+	return copy;
+}
+
++ (AOCSegment *)copyOf:(AOCSegment *)other {
+	return [AOCSegment segmentFrom:[AOCCoord x:other.from.x y:other.from.y]
+								to:[AOCCoord x:other.to.x y:other.to.y]];
+}
+
+- (BOOL)isEqualToSegment:(AOCSegment *)other {
+	return [self.from isEqualToCoord:other.from] && [self.to isEqualToCoord:other.to];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat:@"{from: %@ to: %@}", self.from.description, self.to.description];
+}
+
+- (NSUInteger)hash {
+	return [self.from hash] ^ [self.to hash];
+}
+
+@end
+
+/* *************************************************
+ 
  AOCExtent
  
  ************************************************* */

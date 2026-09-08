@@ -24,6 +24,8 @@
 - (NSString *)stringAtCoord:(AOCCoord *)coord;
 - (void)setObject:(NSObject *)value atCoord:(AOCCoord *)coord;
 
+- (void)floodFillAt:(AOCCoord *)coord with:(NSString *)value;
+
 - (void)clearAtCoord:(AOCCoord *)coord;
 - (void)clearAtCoord:(AOCCoord *)coord resetExtent:(BOOL)reset;
 - (void)clearAll;

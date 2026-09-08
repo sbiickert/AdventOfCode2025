@@ -100,6 +100,19 @@
 	}
 }
 
+- (void)floodFillAt:(AOCCoord *)coord with:(NSString *)value {
+	NSString *local = [self stringAtCoord:coord];
+	[self setObject:value atCoord:coord];
+	
+	NSArray<AOCCoord *> *neighbors = [coord adjacentCoordsWithRule:self.rule];
+	for (AOCCoord *n in neighbors) {
+		if ([[self stringAtCoord:n] isEqualToString:local] && [self.extent contains:n]) {
+			[self floodFillAt:n with:value];
+		}
+	}
+}
+
+
 - (void)clearAtCoord:(AOCCoord *)coord {
 	[_data removeObjectForKey:coord];
 }

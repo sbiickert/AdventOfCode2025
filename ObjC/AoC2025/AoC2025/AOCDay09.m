@@ -7,6 +7,7 @@
 #import "AOCDay.h"
 #import "AOCSpatial.h"
 #import "AOCStrings.h"
+#import "AOCGrid.h"
 
 @interface AOCCompressionMap : NSObject
 
@@ -34,14 +35,9 @@
 	NSArray<NSString *> *input = [AOCInput readGroupedInputFile:filename atIndex:index];
 	
 	NSArray<AOCCoord *> *coords = [self parseCoords:input];
-	AOCCompressionMap *cMap = [[AOCCompressionMap alloc] init:coords];
-	
-//	AOCCoord *compressed = [cMap compress:coords.firstObject];
-//	AOCCoord *expanded = [cMap expand:compressed];
-//	assert([expanded isEqualToCoord:coords.firstObject]);
 	
 	result.part1 = [self solvePartOne: coords];
-	result.part2 = [self solvePartTwo: input];
+	result.part2 = [self solvePartTwo: coords];
 	
 	return result;
 }
@@ -61,9 +57,90 @@
 	return [NSString stringWithFormat: @"The largest area is %ld", (long)maxArea];
 }
 
-- (NSString *)solvePartTwo:(NSArray<NSString *> *)input {
+- (NSString *)solvePartTwo:(NSArray<AOCCoord *> *)coords {
+	AOCCompressionMap *cMap = [[AOCCompressionMap alloc] init:coords];
+	NSMutableArray<AOCCoord *> *compCoords = [NSMutableArray array];
 	
-	return [NSString stringWithFormat: @"World %ld", (long)42];
+	for (AOCCoord *c in coords) {
+		[compCoords addObject:[cMap compress:c]];
+	}
+	
+	AOCGrid *grid = [self paintGrid:compCoords];
+
+	NSInteger maxArea = 0;
+
+	for (NSInteger i = 0; i < compCoords.count-1; i++) {
+		for (NSInteger j = i + 1; j < compCoords.count; j++) {
+			// Is the expanded area bigger than maxArea?
+			NSInteger area = (labs(coords[i].x - coords[j].x) + 1) *
+							 (labs(coords[i].y - coords[j].y) + 1);
+
+			// If not, move on
+			if (area <= maxArea) { continue; }
+			
+			// Is every coord along the edge of the box the same color?
+			AOCExtent *ext = [[AOCExtent alloc] initFrom:@[compCoords[i], compCoords[j]]];
+			
+			BOOL ok = YES;
+//			for (AOCCoord *edgeCoord in ext.edgeCoords) { // Slow
+			for (NSInteger x = ext.min.x; x <= ext.max.x; x++) {
+				for (NSInteger y = ext.min.y; y <= ext.max.y; y++) {
+					if (x == ext.min.x || x == ext.max.x || y == ext.min.y || y == ext.max.y) {
+						if ([[grid stringAtCoord:[AOCCoord x:x y:y]] isEqualToString:@"#"] == NO) {
+							ok = NO;
+							break;
+						}
+					}
+				}
+				if (ok == NO) {break;}
+			}
+			
+			if (ok) {
+				maxArea = area;
+//				NSLog(@"%ld", maxArea);
+			}
+		}
+	}
+
+
+	return [NSString stringWithFormat: @"The largest solid area is %ld", (long)maxArea];
+}
+
+- (AOCGrid *)paintGrid:(NSArray<AOCCoord *> *)coords {
+	AOCGrid *grid = [AOCGrid grid];
+	
+	// Paint edges
+	for (NSInteger i = 0; i < coords.count; i++) {
+		AOCCoord *c1 = coords[i];
+		AOCCoord *c2;
+		if (i < coords.count-1) {
+			c2 = coords[i+1];
+		}
+		else {
+			c2 = coords.firstObject;
+		}
+		
+		AOCSegment *seg = [AOCSegment segmentFrom:c1 to:c2];
+		AOCCoord *ptr = c1;
+		while ([ptr isEqualToCoord:c2] == NO) {
+			[grid setObject:@"#" atCoord:ptr];
+			ptr = [ptr offset:seg.direction];
+		}
+	}
+	
+	// Fill
+	for (NSInteger x = grid.extent.min.x; x <= grid.extent.max.x; x++) {
+		AOCCoord *c = [AOCCoord x:x y:grid.extent.min.y];
+		AOCCoord *south = [AOCCoord x:x y:c.y+1];
+		if ([[grid stringAtCoord:c] isEqualToString:@"#"] &&
+			[[grid stringAtCoord:south] isEqualToString:@"."]) {
+			[grid floodFillAt:south with:@"#"];
+			break;
+		}
+	}
+//	[grid print];
+	
+	return grid;
 }
 
 - (NSArray<AOCCoord *> *)parseCoords:(NSArray<NSString *> *)input {

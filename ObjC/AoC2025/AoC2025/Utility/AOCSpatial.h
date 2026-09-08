@@ -114,6 +114,30 @@ extern NSString * const CCW;
 
 /* *************************************************
  
+ AOCSegment - 2D line with a from and to coordinate
+ 
+ ************************************************* */
+
+@interface AOCSegment : NSObject <NSCopying>
+
++ (AOCSegment *) segmentFrom:(AOCCoord *)from to:(AOCCoord *)to;
++ (AOCSegment *)copyOf:(AOCSegment *)other;
+
+- (AOCSegment *)initFrom:(AOCCoord *)from to:(AOCCoord *)to;
+- (BOOL)isEqualToSegment:(AOCSegment *)other;
+
+@property (readonly) AOCCoord *from;
+@property (readonly) AOCCoord *to;
+
+- (BOOL) isHorizontal;
+- (BOOL) isVertical;
+- (NSString *) direction;
+
+@end
+
+
+/* *************************************************
+ 
  AOCExtent - 2D box with a min (upper left) and max (lower right)
  
  ************************************************* */
