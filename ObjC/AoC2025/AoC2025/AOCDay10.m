@@ -117,7 +117,7 @@
 		NSInteger count = [DXMachine bifurcateToVictory:0
 											    buttons:m.buttons
 										    joltageGoal:m.joltageGoal] / 2;
-		NSLog(@"%ld", (long)count);
+//		NSLog(@"%ld", (long)count);
 		totalPresses += count;
 	}
 	
@@ -313,35 +313,56 @@
 }
 
 + (NSArray<DXSolution *> *)solveForParity:(NSInteger)goal buttons:(NSArray<DXButton *> *)buttons {
-	// Enumerate every subset of buttons (each pressed 0 or 1 times) and keep those
-	// whose combined indicator toggle equals the goal parity. Distinct button
-	// combinations that produce the same indicator pattern are NOT interchangeable
-	// for Part 2's joltage subtraction, so we must return all of them.
-	NSMutableArray<DXSolution *> *results = [NSMutableArray array];
-	NSUInteger n = buttons.count;
-	for (NSUInteger mask = 0; mask < (1UL << n); mask++) {
-		NSInteger state = 0;
-		NSInteger count = 0;
-		NSMutableArray<NSNumber *> *history = [NSMutableArray array];
-		for (NSUInteger i = 0; i < n; i++) {
-			BOOL pressed = (mask & (1UL << i)) != 0;
-			[history addObject:@(pressed ? 1 : 0)];
-			if (pressed) {
-				count++;
-				for (NSNumber *idx in buttons[i].indexes) {
-					state ^= [AOCMath powerOfBase:2 exponent:idx.integerValue];
+	// The set of button subsets producing a given indicator pattern depends only on
+	// the buttons, not on the goal. So enumerate all subsets once per machine and
+	// bucket them by the pattern (XOR of index masks) they produce; subsequent calls
+	// are a dictionary lookup. Buckets are cached keyed on the buttons array identity.
+	static NSMapTable<NSArray<DXButton *> *, NSDictionary<NSNumber *, NSArray<DXSolution *> *> *> *cache = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		cache = [NSMapTable weakToStrongObjectsMapTable];
+	});
+
+	NSDictionary<NSNumber *, NSArray<DXSolution *> *> *byState = [cache objectForKey:buttons];
+	if (byState == nil) {
+		// Enumerate every subset of buttons (each pressed 0 or 1 times). Distinct
+		// combinations that produce the same indicator pattern are NOT interchangeable
+		// for Part 2's joltage subtraction, so we keep all of them in each bucket.
+		NSMutableDictionary<NSNumber *, NSMutableArray<DXSolution *> *> *buckets = [NSMutableDictionary dictionary];
+		NSUInteger n = buttons.count;
+		for (NSUInteger mask = 0; mask < (1UL << n); mask++) {
+			NSInteger state = 0;
+			NSInteger count = 0;
+			NSMutableArray<NSNumber *> *history = [NSMutableArray array];
+			for (NSUInteger i = 0; i < n; i++) {
+				BOOL pressed = (mask & (1UL << i)) != 0;
+				[history addObject:@(pressed ? 1 : 0)];
+				if (pressed) {
+					count++;
+					for (NSNumber *idx in buttons[i].indexes) {
+						state ^= [AOCMath powerOfBase:2 exponent:idx.integerValue];
+					}
 				}
 			}
+			NSNumber *key = @(state);
+			NSMutableArray<DXSolution *> *bucket = buckets[key];
+			if (bucket == nil) {
+				bucket = [NSMutableArray array];
+				buckets[key] = bucket;
+			}
+			[bucket addObject:[DXSolution solutionWithPressCount:count history:history]];
 		}
-		if (state == goal) {
-			[results addObject:[DXSolution solutionWithPressCount:count history:history]];
+
+		NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"count" ascending:YES];
+		for (NSMutableArray<DXSolution *> *bucket in buckets.allValues) {
+			[bucket sortUsingDescriptors:@[descriptor]];
 		}
+
+		byState = buckets;
+		[cache setObject:byState forKey:buttons];
 	}
 
-	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"count" ascending:YES];
-	[results sortUsingDescriptors:@[descriptor]];
-
-	return results;
+	return byState[@(goal)] ?: @[];
 }
 
 + (NSInteger)bifurcateToVictory:(NSInteger)total
