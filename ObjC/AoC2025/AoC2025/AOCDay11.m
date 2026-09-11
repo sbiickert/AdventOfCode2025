@@ -37,28 +37,42 @@
 	_devices = [self parseDevices:input];
 	
 	result.part1 = [self solvePartOne];
-	result.part2 = [self solvePartTwo: input];
+	result.part2 = [self solvePartTwo];
 	
 	return result;
 }
 
 - (NSString *)solvePartOne {
 	DXIDevice *you = self.devices[@"you"];
-	NSMutableDictionary<NSString *, NSNumber *> *cache = [NSMutableDictionary dictionaryWithObject:@1 forKey:@"out"];
 	
-	NSInteger pathCount = [self countPathsTo:@"out" from:you cache:cache];
+	NSInteger pathCount = [self countPathsTo:@"out" from:you cache:nil];
 	
 	return [NSString stringWithFormat: @"There are %ld paths from you to out", (long)pathCount];
 }
 
-- (NSString *)solvePartTwo:(NSArray<NSString *> *)input {
-	
-	return [NSString stringWithFormat: @"World %ld", (long)42];
+- (NSString *)solvePartTwo {
+//	NSInteger svrToDacCount = [self countPathsTo:@"dac" from:self.devices[@"svr"] cache:nil];
+	NSInteger svrToFftCount = [self countPathsTo:@"fft" from:self.devices[@"svr"] cache:nil];
+//	NSInteger dacToFftCount = [self countPathsTo:@"fft" from:self.devices[@"dac"] cache:nil];
+	NSInteger fftToDacCount = [self countPathsTo:@"dac" from:self.devices[@"fft"] cache:nil];
+//	NSInteger fftToOutCount = [self countPathsTo:@"out" from:self.devices[@"fft"] cache:nil];
+	NSInteger dacToOutCount = [self countPathsTo:@"out" from:self.devices[@"dac"] cache:nil];
+
+	// There are no paths from dac to fft
+	// Therefore, the path is
+	// svr --> fft --> dac --> out
+	NSInteger pathCount = svrToFftCount * fftToDacCount * dacToOutCount;
+
+	return [NSString stringWithFormat: @"here are %ld paths from %@ to %@ going through fft and dac", (long)pathCount, @"svr", @"out"];
 }
 
 - (NSInteger) countPathsTo:(NSString *)goal
 					  from:(DXIDevice *)device
 					 cache:(NSMutableDictionary<NSString *, NSNumber *> *)cache {
+	if (cache == nil) {
+		cache = [NSMutableDictionary dictionaryWithObject:@1 forKey:goal];
+	}
+
 	if (cache[device.name]) {
 		return cache[device.name].integerValue;
 	}
