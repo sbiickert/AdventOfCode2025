@@ -112,14 +112,14 @@
 - (NSString *)solvePartTwo:(NSArray<DXMachine *> *)machines {
 	NSInteger totalPresses = 0;
 	
-	DXMachine *m = machines[7];
-//	for (DXMachine *m in machines) {
+//	DXMachine *m = machines[7];
+	for (DXMachine *m in machines) {
 		NSInteger count = [DXMachine bifurcateToVictory:0
 											    buttons:m.buttons
 										    joltageGoal:m.joltageGoal] / 2;
 		NSLog(@"%ld", (long)count);
 		totalPresses += count;
-//	}
+	}
 	
 	return [NSString stringWithFormat: @"The fewest presses was %ld", (long)totalPresses];
 }
@@ -313,60 +313,35 @@
 }
 
 + (NSArray<DXSolution *> *)solveForParity:(NSInteger)goal buttons:(NSArray<DXButton *> *)buttons {
-	NSMutableArray<NSNumber *> *noHistory = [NSMutableArray array];
-	for (NSInteger i = 0; i < buttons.count; i++) {[noHistory addObject:@0];}
-
-	if (goal == 0) {
-		return @[[DXSolution solutionWithPressCount:0 history:noHistory]];
-	}
-	
-	NSDictionary<NSNumber *, NSArray<NSNumber *> *> *data = [NSDictionary dictionaryWithObject:noHistory forKey:@0];
-	NSMutableSet<NSNumber *> *evaluated = [NSMutableSet set];
-	NSInteger round = 1;
-	NSMutableDictionary<NSNumber *, DXSolution *> *result = [NSMutableDictionary dictionary];
-	
-	while (data.count > 0) {
-		NSMutableDictionary<NSNumber *, NSArray<NSNumber *> *> *nextData = [NSMutableDictionary dictionary];//WithObject:noHistory forKey:@0];
-		
-		for (NSNumber *state in data) {
-			NSArray<NSNumber *> *history = [data objectForKey:state];
-			[evaluated addObject:state];
-			
-			for (NSInteger i = 0; i < buttons.count; i++) {
-				DXButton *button = buttons[i];
-				if (history[i].integerValue == 0) { // Can't push a button twice
-					NSInteger iState = state.integerValue;
-					NSMutableArray<NSNumber *> *newHistory = history.mutableCopy;
-					
-					for (NSNumber *n in button.indexes) {
-						NSInteger lightIndex = n.integerValue;
-						iState = iState ^ [AOCMath powerOfBase:2 exponent:lightIndex];
-					}
-					newHistory[i] = [NSNumber numberWithInteger: newHistory[i].integerValue + 1];
-
-					NSNumber *newState = [NSNumber numberWithInteger:iState];
-					if (newState.integerValue == goal) {
-						DXSolution *s = [DXSolution solutionWithPressCount:round history:newHistory];
-						NSNumber *key = [NSNumber numberWithInteger:[DXMachine parity:newHistory]];
-						[result setObject:s forKey:key];
-					}
-					else if ([evaluated containsObject:newState] == NO) {
-						[nextData setObject:newHistory forKey:newState];
-					}
+	// Enumerate every subset of buttons (each pressed 0 or 1 times) and keep those
+	// whose combined indicator toggle equals the goal parity. Distinct button
+	// combinations that produce the same indicator pattern are NOT interchangeable
+	// for Part 2's joltage subtraction, so we must return all of them.
+	NSMutableArray<DXSolution *> *results = [NSMutableArray array];
+	NSUInteger n = buttons.count;
+	for (NSUInteger mask = 0; mask < (1UL << n); mask++) {
+		NSInteger state = 0;
+		NSInteger count = 0;
+		NSMutableArray<NSNumber *> *history = [NSMutableArray array];
+		for (NSUInteger i = 0; i < n; i++) {
+			BOOL pressed = (mask & (1UL << i)) != 0;
+			[history addObject:@(pressed ? 1 : 0)];
+			if (pressed) {
+				count++;
+				for (NSNumber *idx in buttons[i].indexes) {
+					state ^= [AOCMath powerOfBase:2 exponent:idx.integerValue];
 				}
 			}
 		}
-		
-		data = nextData;
-		round ++;
+		if (state == goal) {
+			[results addObject:[DXSolution solutionWithPressCount:count history:history]];
+		}
 	}
-	
+
 	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"count" ascending:YES];
-	
-	NSMutableArray<DXSolution *> *resultArray = result.allValues.mutableCopy;
-	[resultArray sortUsingDescriptors:@[descriptor]];
-	
-	return resultArray;
+	[results sortUsingDescriptors:@[descriptor]];
+
+	return results;
 }
 
 + (NSInteger)bifurcateToVictory:(NSInteger)total

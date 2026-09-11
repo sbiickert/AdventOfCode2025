@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "336CA703-A43A-4AE4-A8B9-E032D0713BA3"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AoC2025/AOCDay10.m"
@@ -32,9 +32,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "416"
-            endingLineNumber = "416"
-            landmarkName = "+bifurcateToVictory:buttons:joltageGoal:"
-            landmarkType = "7">
+            endingLineNumber = "416">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
