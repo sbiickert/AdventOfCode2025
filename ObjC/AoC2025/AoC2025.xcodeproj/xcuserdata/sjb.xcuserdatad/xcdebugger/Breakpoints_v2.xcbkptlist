@@ -3,4 +3,39 @@
    uuid = "80E60648-4B31-4138-B7CB-FA7610FD88A5"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "336CA703-A43A-4AE4-A8B9-E032D0713BA3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AoC2025/AOCDay10.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "+bifurcateToVictory:buttons:joltageGoal:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "625BEF0A-6B74-41AD-944B-7ED69CF77CC4"
+            shouldBeEnabled = "Yes"
+            condition = "fewestRecursivePresses == 1000000 &amp;&amp; total == 0"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AoC2025/AOCDay10.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "416"
+            endingLineNumber = "416"
+            landmarkName = "+bifurcateToVictory:buttons:joltageGoal:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
