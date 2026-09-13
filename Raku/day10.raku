@@ -1,5 +1,7 @@
 #!/usr/bin/env raku
 
+# This is incomplete. Refer to the ObjC solution and update.
+
 use lib $*PROGRAM.dirname ~ '/lib';
 use AOC::Util;
 #use AOC::Geometry;
@@ -14,7 +16,7 @@ say "Advent of Code 2025, Day 10: Factory";
 
 my @machines = parse_machines(@input);
 
-solve_part_one(@machines);
+# solve_part_one(@machines);
 solve_part_two(@machines);
 
 exit( 0 );
@@ -23,7 +25,7 @@ sub solve_part_one(@machines) {
 	my $total_presses = 0;
 
 	for @machines -> %m {
-		my ($num_presses, $button_presses) = solve_machine_parity_goal(%m{'goal'}, %m{'buttons1'}.List);
+		my ($num_presses, @button_presses) = solve_machine_parity_goal(%m{'goal'}, %m{'buttons1'}.List);
 		$total_presses += $num_presses;
 	}
 
@@ -34,57 +36,88 @@ sub solve_part_two(@machines) {
 	my $total_presses = 0;
 
 	for @machines -> %m {
-		my ($num_presses, $button_presses) = solve_machine_parity_goal(%m{'goal'}, %m{'buttons1'}.List);
-		$total_presses += $num_presses;
+		my $count = bifurcate_to_victory(0, %m{'buttons1'}.List, %m{'buttons2'}, %m{'jolts'});
+		$total_presses += $count;
+		die $count;
 	}
 
 	say "Part Two: the minimum total presses is $total_presses.";
 }
 
 # https://old.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
-sub bifurcate_to_victory() {
+sub bifurcate_to_victory($total, @buttons_bits, @buttons_onoff, @jolts --> Int) {
+	my $joltage_parity = jolts_to_parity(@jolts);
+	my ($fewest_presses, @all_valid_button_presses) = solve_machine_parity_goal($joltage_parity, @buttons_bits);
+	say @all_valid_button_presses;
+	@all_valid_button_presses = @all_valid_button_presses.first.List;
+	say "Fewest: $fewest_presses";
+	say @jolts;
+	say $joltage_parity;
+	my $fewest_recursive = 1000000;
+	for @all_valid_button_presses -> $presses {
+		say "presses: $presses";
+		my @new_jolts = apply_button_presses_to_joltages($presses, @buttons_onoff, @jolts);
+		say @new_jolts;
+		next if @new_jolts.any < 0;
+		# Divide by 2
+		@new_jolts = @new_jolts >>/>> 2; #hyper operator
+		say @new_jolts;
+		# die if $total > 0;
 
+		my $presses_recursive = bifurcate_to_victory($fewest_presses, @buttons_bits, @buttons_onoff, @new_jolts);
+		if $presses_recursive < $fewest_recursive {
+			$fewest_recursive = $presses_recursive;
+		}
+	}
+	return 2 * $fewest_recursive + $total;
 }
 
 sub solve_machine_parity_goal(Int $goal, @buttons) {
-	return 0 if $goal == 0;
+	return (0, ()) if $goal == 0;
 
 	my %data = ( 0 => 0 ); # State 0 (all off) => button press bitmap
 	my %evaluated = ();
-	my $num_presses = 1000000; # large number
-	my $result_button_presses = 0;
+	my $fewest_presses = 1000000; # large number
+	my %all_successful_button_presses = ();
 	my $round = 1;
 
-	while ($num_presses == 1000000 && %data.elems > 0) {
+	while (%data.elems > 0) {
 		my @states = %data.keys;
 		my %new_data = ();
 
 		for %data.kv -> $state, $button_press_history {
-			# say "$state => $button_press_history";
 			%evaluated{$state} = 1;
 
 			for @buttons.kv -> $i, $button {
 				my $new_button_presses = $button_press_history + (2 ** $i);
-				if ($button_press_history +& (2 ** $i)) == 0 {
-					my $result = $state +^ $button; # $state xor $button is $result
+				if ($button_press_history +& (2 ** $i)) == 0 { 	# Can't push a button twice
+					my $result = $state +^ $button; 			# $state xor $button is $result
 					if $result == $goal {
-						$num_presses = $round;
-						$result_button_presses = $new_button_presses;
-						last;
+						$fewest_presses = $round if $round < $fewest_presses;
+						# say "Found goal $goal with $new_button_presses";
+						%all_successful_button_presses{$new_button_presses} = 1;
 					}
-					if !(%evaluated{$result}) {
+					elsif !(%evaluated{$result}) {
 						%new_data{$result} = $new_button_presses;
 					}
 				}
 			}
-
-			last if $num_presses != 1000000;
 		}
 		%data = %new_data;
 		$round++;
 	}
 
-	return ($num_presses, $result_button_presses);
+	return ($fewest_presses, %all_successful_button_presses.keys.List);
+}
+
+sub jolts_to_parity(@joltages --> Int) {
+	my $parity = 0;
+	for 0..@joltages.end -> $i {
+		if @joltages[$i] %% 2 == False {
+			$parity += 2 ** $i;
+		}
+	}
+	return $parity;
 }
 
 sub apply_button_presses_to_joltages($button_presses, @buttons, @joltages) {
@@ -92,9 +125,10 @@ sub apply_button_presses_to_joltages($button_presses, @buttons, @joltages) {
 	for 0..@buttons.end -> $i {
 		if $button_presses +& (2 ** $i) != 0 {
 			# Button $i was pressed
-			
+			@new_joltages = @new_joltages <<->> @buttons[$i];
 		}
 	}
+	return @new_joltages;
 }
 
 sub solve_part_two_slow(@machines) {
