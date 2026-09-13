@@ -52,4 +52,23 @@
 }
 
 
++ (NSArray<NSArray *> *)transpose:(NSArray<NSArray *> *)source {
+	NSMutableArray<NSMutableArray *> *result = [NSMutableArray array];
+	for (NSInteger row = 0; row < source.count; row++) {
+		NSMutableArray *mRow = [NSMutableArray array];
+		for (NSInteger col = 0; col < source[row].count; col++) {
+			[mRow addObject:@0]; // Arbitrary object
+		}
+		[result addObject: mRow];
+	}
+	
+	for (NSInteger row = 0; row < source.count; row++) {
+		for (NSInteger col = 0; col < source[row].count; col++) {
+			result[row][col] = source[col][row];
+		}
+	}
+	
+	return result;
+}
+
 @end

@@ -12,6 +12,7 @@
 + (NSArray<NSNumber *> *)sortedNumbers:(NSArray<NSNumber *> *)array ascending:(BOOL)asc;
 + (void)increment:(NSMutableArray<NSNumber *> *)array at:(NSInteger)index;
 + (void)decrement:(NSMutableArray<NSNumber *> *)array at:(NSInteger)index;
++ (NSArray<NSArray *> *)transpose:(NSArray<NSArray *> *)source;
 
 @end
 

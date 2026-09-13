@@ -12,7 +12,6 @@
 
 @property (readonly) NSString *name;
 @property (readonly) NSSet<NSString *> *outputs;
-@property (readonly) NSMutableSet<NSString *> *inputs;
 
 @end
 
@@ -97,14 +96,6 @@
 	DXIDevice *out = [[DXIDevice alloc] init:@"out: "];
 	[result setObject:out forKey:out.name];
 	
-	for (NSString *key in result) {
-		DXIDevice *d = result[key];
-		for (NSString *output in d.outputs) {
-			DXIDevice *outputDevice = [result objectForKey:output];
-			[outputDevice.inputs addObject:d.name];
-		}
-	}
-	
 	return result;
 }
 
@@ -125,7 +116,6 @@
 	else {
 		_outputs = [NSSet setWithArray: [parts.lastObject componentsSeparatedByString:@" "]];
 	}
-	_inputs = [NSMutableSet set];
 	
 	return self;
 }
