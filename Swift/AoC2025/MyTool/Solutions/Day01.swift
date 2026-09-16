@@ -18,42 +18,25 @@ class Day01: AoCSolution {
 		super.solve(input)
 		
 		let turns = parseTurns(input: input.textLines)
-		let p1 = solvePartOne(turns: turns)
-		let p2 = solvePartTwo(turns: turns)
 		
-		return AoCResult(part1: "The password is \(p1)", part2: "The password is \(p2)")
-	}
-	
-	func solvePartOne(turns:[DialTurn]) -> Int {
-		var value = 50
-		var zeroCount = 0;
+		var p1 = 0
+		var p2 = 0
+		var dialPosition = 50
 		
 		for turn in turns {
-			value += turn.size * turn.offset
-			value = AoCUtil.trueMod(num: value, mod: 100)
-			if value == 0 {
-				zeroCount += 1
-			}
-		}
-		
-		return zeroCount
-	}
-	
-	func solvePartTwo(turns:[DialTurn]) -> Int {
-		var value = 50
-		var zeroCount = 0;
-		
-		for turn in turns {
-			for _ in 0..<turn.size {
-				value += turn.offset
-				value = AoCUtil.trueMod(num: value, mod: 100)
-				if value == 0 {
-					zeroCount += 1
+			for _ in 1...turn.size {
+				dialPosition += turn.offset
+				dialPosition = AoCUtil.trueMod(num: dialPosition, mod: 100)
+				if dialPosition == 0 {
+					p2 += 1 // If the dial passes zero
 				}
 			}
+			if dialPosition == 0 {
+				p1 += 1 // If the dial ends at zero
+			}
 		}
-		
-		return zeroCount
+
+		return AoCResult(part1: "The password is \(p1)", part2: "The password is \(p2)")
 	}
 	
 	func parseTurns(input: [String]) -> [DialTurn] {
@@ -62,7 +45,9 @@ class Day01: AoCSolution {
 			assert(d != "x")
 			let s = Int(line.dropFirst(1)) ?? -1
 			assert(s >= 0)
-			return DialTurn(dir: d, size: s)
+			let o = (d == "R") ? 1 : -1
+
+			return DialTurn(dir: d, size: s, offset: o)
 		}
 		return turns
 	}
@@ -71,9 +56,6 @@ class Day01: AoCSolution {
 struct DialTurn {
 	let dir: String
 	let size: Int
-	
-	var offset:Int {
-		return (dir == "R") ? 1 : -1
-	}
+	let offset: Int
 }
 

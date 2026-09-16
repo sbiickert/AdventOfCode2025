@@ -2,7 +2,5 @@ import Foundation
 
 let s = Day01()
 let i = AoCInput.inputsFor(solution: s)
-var rTest = s.solve(i[0])
-print("\(rTest.description)")
-//let rChallenge = s.solve(i[0])
-//print("\(rChallenge.description)")
+var r = s.solve(i[0]) // 0 is challenge, 1 is first test group, etc.
+print("\(r.description)")
