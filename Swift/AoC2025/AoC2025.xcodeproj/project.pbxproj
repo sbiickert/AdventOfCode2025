@@ -28,6 +28,7 @@
 				Libraries/AoCUtil.swift,
 				Solutions/Day00.swift,
 				Solutions/Day01.swift,
+				Solutions/Day02.swift,
 			);
 			target = 37AC78BE3059FC480055C19D /* AoCLibraryTests */;
 		};
