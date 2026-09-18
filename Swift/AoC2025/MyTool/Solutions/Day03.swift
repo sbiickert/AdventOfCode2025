@@ -20,14 +20,14 @@ class Day03: AoCSolution {
 			AoCUtil.numberToIntArray(line)
 		}
 		
-		let p1 = solvePart(joltages: joltages, count: 2)
-		let p2 = solvePart(joltages: joltages, count: 12)
+		let p1 = solvePart(joltages, count: 2)
+		let p2 = solvePart(joltages, count: 12)
 
 		return AoCResult(part1: "Total joltage with 2 batteries is \(p1)",
 						 part2: "Total joltage with 12 batteries is \(p2)")
 	}
 	
-	func solvePart(joltages:[[Int]], count:Int) -> Int {
+	func solvePart(_ joltages:[[Int]], count:Int) -> Int {
 		let result = joltages.map({ select(best: count, in: $0) }).reduce(0, +)
 		return result
 	}
