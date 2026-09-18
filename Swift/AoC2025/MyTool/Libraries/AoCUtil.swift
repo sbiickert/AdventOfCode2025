@@ -122,6 +122,25 @@ class AoCUtil {
 		
 		return pivot
 	}
+	
+	static func joinDigits(_ digits:[Int]) -> Int {
+		var value = 0
+		
+		for i in stride(from: digits.count-1, through: 0, by: -1) {
+			let exponent = (digits.count-1) - i;
+			value += digits[i] * AoCUtil.powerOf(base: 10, toExponent: exponent)
+		}
+		
+		return value
+	}
+	
+	static func powerOf(base:Int, toExponent exponent:Int) -> Int {
+		var result = 1
+		for i in 0..<exponent {
+			result *= base
+		}
+		return result
+	}
 }
 
 
