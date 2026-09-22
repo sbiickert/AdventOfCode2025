@@ -1,5 +1,5 @@
 //
-//  dayXX.swift
+//  Day<##>.swift
 //  AoC2025
 //
 

@@ -136,7 +136,7 @@ class AoCUtil {
 	
 	static func powerOf(base:Int, toExponent exponent:Int) -> Int {
 		var result = 1
-		for i in 0..<exponent {
+		for _ in 0..<exponent {
 			result *= base
 		}
 		return result
