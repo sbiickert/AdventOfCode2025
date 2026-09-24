@@ -199,6 +199,11 @@ struct AoCCoord3D: Hashable, Equatable, CustomDebugStringConvertible {
 		return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 	}
 	
+	func distance(to other: AoCCoord3D) -> Double {
+		let delta = self - other
+		return sqrt(pow(Double(delta.x), 2) + pow(Double(delta.y), 2) + pow(Double(delta.z), 2))
+	}
+	
 	func isAdjacent(to other: AoCCoord3D, rule: AoCAdjacencyRule = .rook) -> Bool {
 		switch rule {
 		case .rook:

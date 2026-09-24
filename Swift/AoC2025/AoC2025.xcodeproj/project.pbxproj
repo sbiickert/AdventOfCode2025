@@ -34,6 +34,7 @@
 				Solutions/Day05.swift,
 				Solutions/Day06.swift,
 				Solutions/Day07.swift,
+				Solutions/Day08.swift,
 			);
 			target = 37AC78BE3059FC480055C19D /* AoCLibraryTests */;
 		};
