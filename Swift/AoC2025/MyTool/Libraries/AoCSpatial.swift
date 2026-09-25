@@ -370,6 +370,41 @@ struct AoCPos2D: Hashable, CustomDebugStringConvertible {
 }
 
 
+struct AoCSegment2D: Hashable, Equatable, CustomDebugStringConvertible {
+	let from:AoCCoord2D
+	let to: AoCCoord2D
+	
+	var isHorizontal: Bool {
+		return from.y == to.y
+	}
+	
+	var isVertical: Bool {
+		return from.x == to.x
+	}
+	
+	var direction:AoCDir {
+		if isHorizontal {
+			return from.x < to.x ? .east : .west
+		}
+		else if isVertical {
+			return from.y < to.y ? .south : .north
+		}
+		
+		if from.x < to.x {
+			return from.y < to.y ? .se : .ne
+		}
+		return from.y < to.y ? .sw : .nw
+	}
+	
+	var description: String {
+		return "{\(from) -\(direction)-> \(to)}"
+	}
+	
+	var debugDescription: String {
+		return description
+	}
+}
+
 struct AoCExtent2D: Hashable, Equatable, CustomDebugStringConvertible {
 	static func build(from coords: [AoCCoord2D]) -> AoCExtent2D? {
 		if let (xmin, xmax) = (coords.map { $0.x }).minAndMax(),

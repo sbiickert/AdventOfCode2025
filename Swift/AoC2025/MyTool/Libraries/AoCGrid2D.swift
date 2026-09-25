@@ -98,18 +98,29 @@ class AoCGrid2D {
 		guard let ext = extent, ext.contains(point) else {
 			return true
 		}
-		// Neighbour lists are captured before recursing, so the same cell can be
-		// reached twice; bail out if this branch already painted it.
-		if stringValue(at: point) == value {
-			return false
-		}
+		
 		var touchedInfinity = false
-		setValue(value, at: point)
-		filled.append(point)
-		let neighbours = neighbourCoords(at: point, withValue: defaultValue)
-		for neighbour in neighbours {
-			touchedInfinity = touchedInfinity || fill(with: value, at: neighbour, filled: &filled)
+		let valueToFill = self.stringValue(at: point)
+		
+		var work = Set([point])
+		while work.count > 0 {
+			var nextWork = Set<AoCCoord2D>()
+			
+			for c in work {
+				self.setValue(value, at: c)
+				let neighbors = neighbourCoords(at: c)
+				for n in neighbors {
+					if ext.contains(n) == false { touchedInfinity = true }
+					if !touchedInfinity && stringValue(at: n) == valueToFill {
+						nextWork.insert(n)
+					}
+				}
+			}
+			
+			work = nextWork
+			if touchedInfinity == true { break }
 		}
+		
 		if touchedInfinity {
 			for filledPoint in filled {
 				clear(at: filledPoint)
