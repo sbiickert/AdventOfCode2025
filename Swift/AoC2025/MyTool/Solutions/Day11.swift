@@ -16,16 +16,48 @@ class Day11: AoCSolution {
 	override func solve(_ input: AoCInput) -> AoCResult {
 		super.solve(input)
 		
-		let devices = parseDevices(input: input.textLines)
+		let devices1 = parseDevices(input: input.textLines)
+		let p1 = solvePartOne(devices1)
 		
-		let p1 = solvePartOne(devices)
+//		let devices2 = parseDevices(input: input.allInputGroups[1])
+		let devices2 = parseDevices(input: input.textLines)
+		let p2 = solvePartTwo(devices2)
 		
-		return AoCResult(part1: "The number of paths is \(p1)", part2: "sync")
+		return AoCResult(part1: "The number of paths is \(p1)", part2: "The number of paths is \(p2)")
 	}
 	
 	func solvePartOne(_ devices: Dictionary<String, Device>) -> Int {
 		var cache = Dictionary<String, Int>()
 		return countRoutes(from: devices["you"]!, to: "out", in: devices, with: &cache)
+	}
+	
+	func solvePartTwo(_ devices: Dictionary<String, Device>) -> Int {
+		var cache = Dictionary<String, Int>()
+		
+		cache = Dictionary<String, Int>()
+		let dacToFft = countRoutes(from: devices["dac"]!, to: "fft", in: devices, with: &cache)
+		
+		var count = 0
+		if dacToFft > 0 {
+			// svr --> dac --> fft --> out
+			cache = Dictionary<String, Int>()
+			let svrToDac = countRoutes(from: devices["svr"]!, to: "dac", in: devices, with: &cache)
+			cache = Dictionary<String, Int>()
+			let fftToOut = countRoutes(from: devices["fft"]!, to: "out", in: devices, with: &cache)
+			count = svrToDac * dacToFft * fftToOut
+		}
+		else {
+			// svr --> fft --> dac --> out
+			cache = Dictionary<String, Int>()
+			let svrToFft = countRoutes(from: devices["svr"]!, to: "fft", in: devices, with: &cache)
+			cache = Dictionary<String, Int>()
+			let fftToDac = countRoutes(from: devices["fft"]!, to: "dac", in: devices, with: &cache)
+			cache = Dictionary<String, Int>()
+			let dacToOut = countRoutes(from: devices["dac"]!, to: "out", in: devices, with: &cache)
+			count = svrToFft * fftToDac * dacToOut
+		}
+
+		return count
 	}
 	
 	func countRoutes(from device: Device,
