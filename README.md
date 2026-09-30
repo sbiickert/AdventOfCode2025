@@ -40,3 +40,13 @@ Normally, I solve the impossible math problem by finding a solution on Reddit an
 Since this is the end of AoC 2025, it's not like I've fallen behind on day 12 with 13 more to go. I expect I will push through over the next few days and finish. But I might put Smalltalk aside. It's been a cool experiment, but it's the editor that makes it painful. I haven't had an "explorer"-style code editor since [PowerBuilder](https://en.wikipedia.org/wiki/PowerBuilder) or [REALbasic](https://macintoshgarden.org/apps/realbasic-1x-2x-3x-4x-5x) and I had the same frustration: instead of a large code editor with many functions, there is a small view for only the current function that you've selected. It can make editing feel like a click-fest as you're jumping back and forth, and you need to save your "tabs" as you go.
 
 I think I might pick up F# (currently complete to day 4) and run through days 5 to 9 and then handle 10, 11 and 12. 
+
+### Solved, Months Later
+
+It ended up taking a very long time to summon the will to finish. I eventually took it on in Raku, and had some good momentum until I hit Day 10, the same place that the wheels fell off in December. I had issues with the recursive solution (and the code that is checked in doesn't work, so don't expect it to).
+
+I then backed up and took another run at it in Objective-C. I wanted strong typing and a full debugger to get through the recursion. I felt the wheels falling off again and I pulled up Claude. I needed help spotting the error of my algorithm, because I couldn't spot it. (Clutches pearls) I understood the reasoning of the fix, but I will be the first to admit that I didn't fully understand the code that it inserted in place of mine. 
+
+Day 11 fell into place with shocking ease. And then Day 12... I went to YouTube to find inspiration, and found that it was, in fact, a joke. The Objective-C code has a lot of spurious code that really ended up not being used.
+
+In atonement for my Day 10 reliance on AI, I went back in Swift and re-solved everything, including rewriting the part that Claude wrote. I think the Swift code might be some of the best I've done.
